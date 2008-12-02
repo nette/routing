@@ -182,7 +182,7 @@ class Route extends /*Nette\*/Object implements IRouter
 		$lower = !($this->flags & self::CASE_SENSITIVE);
 		foreach ($this->metadata as $name => $meta) {
 			if (isset($params[$name])) {
-				$val = $lower ? strtolower($params[$name]) : $params[$name];
+				$val = /*$lower ? strtolower($params[$name]) : */$params[$name]; // strtolower damages UTF-8
 				if (isset($meta[self::FILTER_TABLE][$val])) { // applyies filterTable only to path parameters
 					$params[$name] = $meta[self::FILTER_TABLE][$val];
 
@@ -258,7 +258,14 @@ class Route extends /*Nette\*/Object implements IRouter
 
 		$presenter = $request->getPresenterName();
 		if (isset($metadata[self::MODULE_KEY])) {
-			$a = strrpos($presenter, ':');
+			if (isset($metadata[self::MODULE_KEY]['fixed'])) {
+				$a = strlen($metadata[self::MODULE_KEY]['default']);
+				if (substr($presenter, $a, 1) !== ':') {
+					return NULL; // module not match
+				}
+			} else {
+				$a = strrpos($presenter, ':');
+			}
 			$params[self::MODULE_KEY] = substr($presenter, 0, $a);
 			$params[self::PRESENTER_KEY] = substr($presenter, $a + 1);
 		} else {
