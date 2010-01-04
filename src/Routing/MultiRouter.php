@@ -14,12 +14,6 @@
 
 
 
-require_once dirname(__FILE__) . '/../../Application/IRouter.php';
-
-require_once dirname(__FILE__) . '/../../Collections/ArrayList.php';
-
-
-
 /**
  * The router broker.
  *
@@ -28,7 +22,7 @@ require_once dirname(__FILE__) . '/../../Collections/ArrayList.php';
  */
 class MultiRouter extends /*Nette\Collections\*/ArrayList implements IRouter
 {
-	/** @var array {@link MultiRouter::constructUrl()} */
+	/** @var array */
 	private $cachedRoutes;
 
 
