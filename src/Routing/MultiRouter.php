@@ -25,6 +25,16 @@ class MultiRouter extends Nette\ArrayList implements IRouter
 	/** @var array */
 	private $cachedRoutes;
 
+	/** @var string */
+	private $module;
+
+
+
+	public function __construct($module = NULL)
+	{
+		$this->module = $module ? $module . ':' : '';
+	}
+
 
 
 	/**
@@ -37,6 +47,7 @@ class MultiRouter extends Nette\ArrayList implements IRouter
 		foreach ($this as $route) {
 			$appRequest = $route->match($httpRequest);
 			if ($appRequest !== NULL) {
+				$appRequest->setPresenterName($this->module . $appRequest->getPresenterName());
 				return $appRequest;
 			}
 		}
@@ -77,6 +88,15 @@ class MultiRouter extends Nette\ArrayList implements IRouter
 			}
 
 			$this->cachedRoutes = $routes;
+		}
+
+		if ($this->module) {
+			if (strncasecmp($tmp = $appRequest->getPresenterName(), $this->module, strlen($this->module)) === 0) {
+				$appRequest = clone $appRequest;
+				$appRequest->setPresenterName(substr($tmp, strlen($this->module)));
+			} else {
+				return NULL;
+			}
 		}
 
 		$presenter = strtolower($appRequest->getPresenterName());
