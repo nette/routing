@@ -133,4 +133,14 @@ class RouteList extends Nette\ArrayList implements Nette\Application\IRouter
 		parent::offsetSet($index, $route);
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	public function getModule()
+	{
+		return $this->module;
+	}
+
 }
