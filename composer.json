@@ -1,0 +1,36 @@
+{
+	"name": "nette/routing",
+	"description": "Nette Routing: two-ways URL conversion",
+	"homepage": "http://nette.org",
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+		{
+			"name": "David Grudl",
+			"homepage": "http://davidgrudl.com"
+		},
+		{
+			"name": "Nette Community",
+			"homepage": "http://nette.org/contributors"
+		}
+	],
+	"require": {
+		"php": ">=5.3.1",
+		"nette/http": "~2.2",
+		"nette/utils": "~2.2"
+	},
+	"require-dev": {
+		"nette/tester": "~1.0"
+	},
+	"conflict": {
+		"nette/application": "<3.0"
+	},
+	"autoload": {
+		"classmap": ["src/"]
+	},
+	"minimum-stability": "dev",
+	"extra": {
+		"branch-alias": {
+			"dev-master": "2.3-dev"
+		}
+	}
+}
