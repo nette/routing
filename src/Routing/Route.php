@@ -457,29 +457,22 @@ class Route extends Nette\Object implements Application\IRouter
 		}
 
 		// PARSE MASK
-		// <parameter-name[=default] [pattern] [#class]> or [ or ] or ?...
-		$parts = Strings::split($mask, '/<([^>#= ]+)(=[^># ]*)? *([^>#]*)(#?[^>\[\]]*)>|(\[!?|\]|\s*\?.*)/');
+		// <parameter-name[=default] [pattern]> or [ or ] or ?...
+		$parts = Strings::split($mask, '/<([^>= ]+)(=[^> ]*)? *([^>]*)>|(\[!?|\]|\s*\?.*)/');
 
 		$this->xlat = array();
 		$i = count($parts) - 1;
 
 		// PARSE QUERY PART OF MASK
 		if (isset($parts[$i - 1]) && substr(ltrim($parts[$i - 1]), 0, 1) === '?') {
-			// name=<parameter-name [pattern][#class]>
-			$matches = Strings::matchAll($parts[$i - 1], '/(?:([a-zA-Z0-9_.-]+)=)?<([^># ]+) *([^>#]*)(#?[^>]*)>/');
+			// name=<parameter-name [pattern]>
+			$matches = Strings::matchAll($parts[$i - 1], '/(?:([a-zA-Z0-9_.-]+)=)?<([^> ]+) *([^>]*)>/');
 
 			foreach ($matches as $match) {
-				list(, $param, $name, $pattern, $class) = $match;  // $pattern is not used
+				list(, $param, $name, $pattern) = $match;  // $pattern is not used
 
-				if ($class !== '') {
-					if (!isset(static::$styles[$class])) {
-						throw new Nette\InvalidStateException("Parameter '$name' has '$class' flag, but Route::\$styles['$class'] is not set.");
-					}
-					$meta = static::$styles[$class];
-
-				} elseif (isset(static::$styles['?' . $name])) {
+				if (isset(static::$styles['?' . $name])) {
 					$meta = static::$styles['?' . $name];
-
 				} else {
 					$meta = static::$styles['?#'];
 				}
@@ -500,7 +493,7 @@ class Route extends Nette\Object implements Application\IRouter
 					$this->xlat[$name] = $param;
 				}
 			}
-			$i -= 6;
+			$i -= 5;
 		}
 
 		// PARSE PATH PART OF MASK
@@ -525,11 +518,10 @@ class Route extends Nette\Object implements Application\IRouter
 				}
 				array_unshift($sequence, $part);
 				$re = ($part[0] === '[' ? '(?:' : ')?') . $re;
-				$i -= 5;
+				$i -= 4;
 				continue;
 			}
 
-			$class = $parts[$i]; $i--; // validation class
 			$pattern = trim($parts[$i]); $i--; // validation condition (as regexp)
 			$default = $parts[$i]; $i--; // default value
 			$name = $parts[$i]; $i--; // parameter name
@@ -543,15 +535,8 @@ class Route extends Nette\Object implements Application\IRouter
 			}
 
 			// pattern, condition & metadata
-			if ($class !== '') {
-				if (!isset(static::$styles[$class])) {
-					throw new Nette\InvalidStateException("Parameter '$name' has '$class' flag, but Route::\$styles['$class'] is not set.");
-				}
-				$meta = static::$styles[$class];
-
-			} elseif (isset(static::$styles[$name])) {
+			if (isset(static::$styles[$name])) {
 				$meta = static::$styles[$name];
-
 			} else {
 				$meta = static::$styles['#'];
 			}
@@ -782,49 +767,6 @@ class Route extends Nette\Object implements Application\IRouter
 	private static function param2path($s)
 	{
 		return str_replace('%2F', '/', rawurlencode($s));
-	}
-
-
-	/********************* Route::$styles manipulator ****************d*g**/
-
-
-	/**
-	 * Creates new style.
-	 * @param  string  style name (#style, urlParameter, ?queryParameter)
-	 * @param  string  optional parent style name
-	 * @return void
-	 */
-	public static function addStyle($style, $parent = '#')
-	{
-		if (isset(static::$styles[$style])) {
-			throw new Nette\InvalidArgumentException("Style '$style' already exists.");
-		}
-
-		if ($parent !== NULL) {
-			if (!isset(static::$styles[$parent])) {
-				throw new Nette\InvalidArgumentException("Parent style '$parent' doesn't exist.");
-			}
-			static::$styles[$style] = static::$styles[$parent];
-
-		} else {
-			static::$styles[$style] = array();
-		}
-	}
-
-
-	/**
-	 * Changes style property value.
-	 * @param  string  style name (#style, urlParameter, ?queryParameter)
-	 * @param  string  property name (Route::PATTERN, Route::FILTER_IN, Route::FILTER_OUT, Route::FILTER_TABLE)
-	 * @param  mixed   property value
-	 * @return void
-	 */
-	public static function setStyleProperty($style, $key, $value)
-	{
-		if (!isset(static::$styles[$style])) {
-			throw new Nette\InvalidArgumentException("Style '$style' doesn't exist.");
-		}
-		static::$styles[$style][$key] = $value;
 	}
 
 }
