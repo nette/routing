@@ -4,9 +4,9 @@
  * Test: Nette\Application\Routers\SimpleRouter and modules.
  */
 
-use Nette\Http,
-	Nette\Application,
-	Tester\Assert;
+use Nette\Http;
+use Nette\Application;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -24,15 +24,15 @@ $url->setQuery([
 $httpRequest = new Http\Request($url);
 
 $req = $router->match($httpRequest);
-Assert::same( 'main:sub:myPresenter',  $req->getPresenterName() );
+Assert::same('main:sub:myPresenter',  $req->getPresenterName());
 
-$url = $router->constructUrl($req, $httpRequest->url);
-Assert::same( 'http://nette.org/file.php?presenter=myPresenter',  $url );
+$url = $router->constructUrl($req, $httpRequest->getUrl());
+Assert::same('http://nette.org/file.php?presenter=myPresenter',  $url);
 
 $req = new Application\Request(
 	'othermodule:presenter',
 	Http\Request::GET,
 	[]
 );
-$url = $router->constructUrl($req, $httpRequest->url);
-Assert::null( $url );
+$url = $router->constructUrl($req, $httpRequest->getUrl());
+Assert::null($url);
