@@ -12,12 +12,6 @@ use Nette;
 
 /**
  * Presenter request. Immutable object.
- *
- * @property   string $presenterName
- * @property   array $parameters
- * @property   array $post
- * @property   array $files
- * @property   string $method
  */
 class Request
 {
