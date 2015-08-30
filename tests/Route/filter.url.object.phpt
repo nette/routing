@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: Nette\Application\Routers\Route with FILTER_IN & FILTER_OUT using string <=> object conversion
+ * Test: Nette\Routing\Route with FILTER_IN & FILTER_OUT using string <=> object conversion
  */
 
 declare(strict_types=1);
 
-use Nette\Application\Routers\Route;
+use Nette\Routing\Route;
 use Tester\Assert;
 
 

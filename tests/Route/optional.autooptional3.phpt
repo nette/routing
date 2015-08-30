@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: Nette\Application\Routers\Route: required parameter with default value
+ * Test: Nette\Routing\Route: required parameter with default value
  */
 
 declare(strict_types=1);
 
-use Nette\Application\Routers\Route;
+use Nette\Routing\Route;
 use Tester\Assert;
 
 

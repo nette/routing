@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: Nette\Application\Routers\Route with slash in path.
+ * Test: Nette\Routing\Route with slash in path.
  */
 
 declare(strict_types=1);
 
-use Nette\Application\Routers\Route;
+use Nette\Routing\Route;
 use Tester\Assert;
 
 

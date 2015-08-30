@@ -23,7 +23,7 @@ The first parameter of `SimpleRouter` constructor is an array of default paramet
 
 ```php
 // defaults to controller 'Homepage' and action 'default'
-$router = new Nette\Application\Routers\SimpleRouter(['controller' => 'homepage', 'action' => 'default']);
+$router = new Nette\Routing\SimpleRouter(['controller' => 'homepage', 'action' => 'default']);
 ```
 
 The second constructor parameter is optional and is used to pass additional flags (only `Router::ONE_WAY` is supported).
@@ -108,8 +108,8 @@ Route Collection
 Because we usually define more than one route, we wrap them into a RouteList.
 
 ```php
-use Nette\Application\Routers\RouteList;
-use Nette\Application\Routers\Route;
+use Nette\Routing\RouteList;
+use Nette\Routing\Route;
 
 $router = new RouteList();
 $router[] = new Route('rss.xml', ...);

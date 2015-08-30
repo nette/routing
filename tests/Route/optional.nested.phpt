@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: Nette\Application\Routers\Route with nested optional sequences.
+ * Test: Nette\Routing\Route with nested optional sequences.
  */
 
 declare(strict_types=1);
 
-use Nette\Application\Routers\Route;
+use Nette\Routing\Route;
 
 
 require __DIR__ . '/../bootstrap.php';

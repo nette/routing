@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Application\Routers\RouteList default usage.
+ * Test: Nette\Routing\RouteList default usage.
  */
 
 declare(strict_types=1);
 
-use Nette\Application\Routers\Route;
-use Nette\Application\Routers\RouteList;
+use Nette\Routing\Route;
+use Nette\Routing\RouteList;
 use Tester\Assert;
 
 

@@ -7,10 +7,9 @@
 
 declare(strict_types=1);
 
-namespace Nette\Application\Routers;
+namespace Nette\Routing;
 
 use Nette;
-use Nette\Application;
 use Nette\Utils\Strings;
 
 
@@ -18,7 +17,7 @@ use Nette\Utils\Strings;
  * The bidirectional route is responsible for mapping
  * HTTP request to an array for dispatch and vice-versa.
  */
-class Route implements Application\IRouter
+class Route implements IRouter
 {
 	use Nette\SmartObject;
 

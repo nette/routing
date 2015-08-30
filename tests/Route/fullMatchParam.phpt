@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: Nette\Application\Routers\Route and full match parameter.
+ * Test: Nette\Routing\Route and full match parameter.
  */
 
 declare(strict_types=1);
 
-use Nette\Application\Routers\Route;
+use Nette\Routing\Route;
 
 
 require __DIR__ . '/../bootstrap.php';

@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Application\Routers\SimpleRouter basic functions.
+ * Test: Nette\Routing\SimpleRouter basic functions.
  */
 
 declare(strict_types=1);
 
-use Nette\Application\Routers\SimpleRouter;
 use Nette\Http;
+use Nette\Routing\SimpleRouter;
 use Tester\Assert;
 
 

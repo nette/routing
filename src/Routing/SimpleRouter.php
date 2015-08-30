@@ -7,16 +7,15 @@
 
 declare(strict_types=1);
 
-namespace Nette\Application\Routers;
+namespace Nette\Routing;
 
 use Nette;
-use Nette\Application;
 
 
 /**
  * The bidirectional route for trivial routing via query parameters.
  */
-class SimpleRouter implements Application\IRouter
+class SimpleRouter implements IRouter
 {
 	use Nette\SmartObject;
 

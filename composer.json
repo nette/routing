@@ -23,9 +23,6 @@
 		"nette/tester": "^2.0",
 		"tracy/tracy": "^2.3"
 	},
-	"conflict": {
-		"nette/application": "<3.0"
-	},
 	"autoload": {
 		"classmap": ["src/"]
 	},

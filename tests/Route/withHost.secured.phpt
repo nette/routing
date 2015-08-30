@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Application\Routers\Route with WithHost
+ * Test: Nette\Routing\Route with WithHost
  */
 
 declare(strict_types=1);
 
-use Nette\Application\Routers\Route;
 use Nette\Http\Url;
+use Nette\Routing\Route;
 use Tester\Assert;
 
 

@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Nette\Application;
+namespace Nette\Routing;
 
 use Nette;
 
