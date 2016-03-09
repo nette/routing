@@ -56,22 +56,7 @@ class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRout
 	public function constructUrl(Nette\Application\Request $appRequest, Nette\Http\Url $refUrl)
 	{
 		if ($this->cachedRoutes === NULL) {
-			$routes = [];
-			$routes['*'] = [];
-
-			foreach ($this as $route) {
-				$presenters = $route instanceof Route && is_array($tmp = $route->getTargetPresenters())
-					? $tmp : array_keys($routes);
-
-				foreach ($presenters as $presenter) {
-					if (!isset($routes[$presenter])) {
-						$routes[$presenter] = $routes['*'];
-					}
-					$routes[$presenter][] = $route;
-				}
-			}
-
-			$this->cachedRoutes = $routes;
+			$this->buildCache();
 		}
 
 		if ($this->module) {
@@ -96,6 +81,29 @@ class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRout
 		}
 
 		return NULL;
+	}
+
+
+	/** @internal */
+	public function buildCache()
+	{
+		$routes = [];
+		$routes['*'] = [];
+
+		foreach ($this as $route) {
+			$presenters = $route instanceof Route && is_array($tmp = $route->getTargetPresenters())
+				? $tmp
+				: array_keys($routes);
+
+			foreach ($presenters as $presenter) {
+				if (!isset($routes[$presenter])) {
+					$routes[$presenter] = $routes['*'];
+				}
+				$routes[$presenter][] = $route;
+			}
+		}
+
+		$this->cachedRoutes = $routes;
 	}
 
 
