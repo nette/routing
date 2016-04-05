@@ -20,8 +20,10 @@ use Nette\Utils\Strings;
  * @property-read array $defaults
  * @property-read int $flags
  */
-class Route extends Nette\Object implements Application\IRouter
+class Route implements Application\IRouter
 {
+	use Nette\SmartObject;
+
 	const PRESENTER_KEY = 'presenter';
 	const MODULE_KEY = 'module';
 

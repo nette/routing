@@ -17,8 +17,10 @@ use Nette\Application;
  * @property-read array $defaults
  * @property-read int $flags
  */
-class SimpleRouter extends Nette\Object implements Application\IRouter
+class SimpleRouter implements Application\IRouter
 {
+	use Nette\SmartObject;
+
 	const PRESENTER_KEY = 'presenter';
 	const MODULE_KEY = 'module';
 

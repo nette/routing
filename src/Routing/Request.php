@@ -19,8 +19,10 @@ use Nette;
  * @property   array $files
  * @property   string $method
  */
-class Request extends Nette\Object
+class Request
 {
+	use Nette\SmartObject;
+
 	/** method */
 	const FORWARD = 'FORWARD';
 
