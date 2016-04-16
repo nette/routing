@@ -458,7 +458,7 @@ class Route implements Application\IRouter
 			}
 		}
 
-		if (strpbrk($mask, '?<[') === FALSE) {
+		if (strpbrk($mask, '?<[]') === FALSE) {
 			$this->re = '#' . preg_quote($mask, '#') . '/?\z#A';
 			$this->sequence = [$mask];
 			$this->metadata = $metadata;
@@ -599,7 +599,7 @@ class Route implements Application\IRouter
 		} while (TRUE);
 
 		if ($brackets) {
-			throw new Nette\InvalidArgumentException("Missing closing ']' in mask '$mask'.");
+			throw new Nette\InvalidArgumentException("Missing '[' in mask '$mask'.");
 		}
 
 		$this->aliases = $aliases;
