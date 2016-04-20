@@ -3,6 +3,7 @@ Nette Routing: two-ways URL conversion
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/routing.svg)](https://packagist.org/packages/nette/routing)
 [![Build Status](https://travis-ci.org/nette/routing.svg?branch=master)](https://travis-ci.org/nette/routing)
+[![Coverage Status](https://coveralls.io/repos/github/nette/routing/badge.svg?branch=master)](https://coveralls.io/github/nette/routing?branch=master)
 
 Routing is a two-way conversion between URL and presenter action. *Two-way* means that we can both determine what presenter URL links to, but also vice versa: generate URL for given action.
 
