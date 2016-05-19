@@ -45,7 +45,7 @@ class Route implements Application\IRouter
 		PATH_OPTIONAL = 1,
 		CONSTANT = 2;
 
-	/** @var int */
+	/** @deprecated */
 	public static $defaultFlags = 0;
 
 	/** @var array */
@@ -135,6 +135,11 @@ class Route implements Application\IRouter
 
 		$this->flags = $flags | static::$defaultFlags;
 		$this->setMask($mask, $metadata);
+		if (static::$defaultFlags) {
+			trigger_error('Route::$defaultFlags is deprecated, router by default keeps the used protocol.', E_USER_DEPRECATED);
+		} elseif ($this->type !== self::HOST && $flags & self::SECURED) {
+			trigger_error('Router::SECURED is deprecated for routes without host, router by default keeps the used protocol.', E_USER_DEPRECATED);
+		}
 	}
 
 
