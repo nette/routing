@@ -389,6 +389,7 @@ class Route implements Application\IRouter
 			}
 		} while (TRUE);
 
+		$scheme = $this->scheme ?: $refUrl->getScheme();
 
 		if ($this->type === self::HOST) {
 			$host = $refUrl->getHost();
@@ -400,10 +401,9 @@ class Route implements Application\IRouter
 				'%sld%' => isset($parts[1]) ? $parts[1] : '',
 				'%host%' => $host,
 			]);
-			$url = ($this->scheme ?: $refUrl->getScheme()) . ':' . $url;
+			$url = $scheme . ':' . $url;
 		} else {
 			if ($this->lastRefUrl !== $refUrl) {
-				$scheme = ($this->scheme ?: $refUrl->getScheme());
 				$basePath = ($this->type === self::RELATIVE ? $refUrl->getBasePath() : '');
 				$this->lastBaseUrl = $scheme . '://' . $refUrl->getAuthority() . $basePath;
 				$this->lastRefUrl = $refUrl;
@@ -411,7 +411,7 @@ class Route implements Application\IRouter
 			$url = $this->lastBaseUrl . $url;
 		}
 
-		if (strpos($url, '//', 7) !== FALSE) {
+		if (strpos($url, '//', strlen($scheme) + 3) !== FALSE) {
 			return NULL;
 		}
 
