@@ -1,6 +1,7 @@
 {
 	"name": "nette/routing",
 	"description": "Nette Routing: two-ways URL conversion",
+	"keywords": ["nette"],
 	"homepage": "https://nette.org",
 	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
