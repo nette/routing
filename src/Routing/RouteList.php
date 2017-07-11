@@ -18,7 +18,7 @@ class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRout
 	/** @var array */
 	private $cachedRoutes;
 
-	/** @var string */
+	/** @var string|null */
 	private $module;
 
 
@@ -121,7 +121,7 @@ class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRout
 
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getModule()
 	{

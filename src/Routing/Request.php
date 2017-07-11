@@ -1,8 +1,8 @@
 <?php
 
 /**
- * This file is part of the Nette Framework (http://nette.org)
- * Copyright (c) 2004 David Grudl (http://davidgrudl.com)
+ * This file is part of the Nette Framework (https://nette.org)
+ * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
 namespace Nette\Application;
@@ -53,7 +53,7 @@ class Request
 	 * @param  array   all uploaded files
 	 * @param  array   flags
 	 */
-	public function __construct($name, $method, array $params = [], array $post = [], array $files = [], array $flags = [])
+	public function __construct($name, $method = null, array $params = [], array $post = [], array $files = [], array $flags = [])
 	{
 		$this->name = $name;
 		$this->method = $method;
@@ -67,7 +67,7 @@ class Request
 	/**
 	 * Sets the presenter name.
 	 * @param  string
-	 * @return self
+	 * @return static
 	 */
 	public function setPresenterName($name)
 	{
@@ -109,7 +109,7 @@ class Request
 
 	/**
 	 * Sets variables provided to the presenter via POST.
-	 * @return self
+	 * @return static
 	 */
 	public function setPost(array $params)
 	{
@@ -130,7 +130,7 @@ class Request
 
 	/**
 	 * Sets all uploaded files.
-	 * @return self
+	 * @return static
 	 */
 	public function setFiles(array $files)
 	{
@@ -151,8 +151,8 @@ class Request
 
 	/**
 	 * Sets the method.
-	 * @param  string
-	 * @return self
+	 * @param  string|null
+	 * @return static
 	 */
 	public function setMethod($method)
 	{
@@ -163,7 +163,7 @@ class Request
 
 	/**
 	 * Returns the method.
-	 * @return string
+	 * @return string|null
 	 */
 	public function getMethod()
 	{
@@ -196,7 +196,7 @@ class Request
 	 * Sets the flag.
 	 * @param  string
 	 * @param  bool
-	 * @return self
+	 * @return static
 	 */
 	public function setFlag($flag, $value = true)
 	{

@@ -21,6 +21,7 @@ class Route implements Application\IRouter
 	use Nette\SmartObject;
 
 	const PRESENTER_KEY = 'presenter';
+
 	const MODULE_KEY = 'module';
 
 	/** @internal url type */
@@ -30,10 +31,15 @@ class Route implements Application\IRouter
 
 	/** key used in {@link Route::$styles} or metadata {@link Route::__construct} */
 	const VALUE = 'value';
+
 	const PATTERN = 'pattern';
+
 	const FILTER_IN = 'filterIn';
+
 	const FILTER_OUT = 'filterOut';
+
 	const FILTER_TABLE = 'filterTable';
+
 	const FILTER_STRICT = 'filterStrict';
 
 	/** @internal fixity types - how to handle default value? {@link Route::$metadata} */
@@ -50,7 +56,7 @@ class Route implements Application\IRouter
 			self::PATTERN => '[^/]+',
 			self::FILTER_OUT => [__CLASS__, 'param2path'],
 		],
-		'?#' => [ // default style for query parameters
+		'?#' => [// default style for query parameters
 		],
 		'module' => [
 			self::PATTERN => '[a-z][a-z0-9.-]*',
@@ -354,7 +360,7 @@ class Route implements Application\IRouter
 			}
 			$i--;
 
-			$name = $sequence[$i]; $i--; // parameter name
+			$name = $sequence[$i--]; // parameter name
 
 			if ($name === ']') { // opening optional part
 				$brackets[] = $url;
@@ -540,9 +546,9 @@ class Route implements Application\IRouter
 				continue;
 			}
 
-			$pattern = trim($parts[$i]); $i--; // validation condition (as regexp)
-			$default = $parts[$i]; $i--; // default value
-			$name = $parts[$i]; $i--; // parameter name
+			$pattern = trim($parts[$i--]); // validation condition (as regexp)
+			$default = $parts[$i--]; // default value
+			$name = $parts[$i--]; // parameter name
 			array_unshift($sequence, $name);
 
 			if ($name[0] === '?') { // "foo" parameter
