@@ -71,7 +71,7 @@ $route = new Route('<lang>/<presenter>/<action>', [
 			return $arr;
 		},
 	],
-	'module' => 'App'
+	'module' => 'App',
 ]);
 
 
