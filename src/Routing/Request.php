@@ -26,6 +26,9 @@ class Request
 	/** flag */
 	const RESTORED = 'restored';
 
+	/** flag */
+	const VARYING = 'varying';
+
 	/** @var string */
 	private $method;
 
