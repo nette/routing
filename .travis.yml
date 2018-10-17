@@ -8,7 +8,7 @@ matrix:
 
 script:
     - vendor/bin/tester tests -s -p php $coverage
-    - php temp/code-checker/src/code-checker.php --short-arrays
+    - php temp/code-checker/code-checker
 
 after_failure:
     # Print *.actual content
