@@ -198,7 +198,7 @@ class Request
 	 * @param  bool
 	 * @return self
 	 */
-	public function setFlag($flag, $value = TRUE)
+	public function setFlag($flag, $value = true)
 	{
 		$this->flags[$flag] = (bool) $value;
 		return $this;
