@@ -28,7 +28,7 @@ class Request
 	/** flag */
 	public const RESTORED = 'restored';
 
-	/** @var string|NULL */
+	/** @var string|null */
 	private $method;
 
 	/** @var array */
@@ -53,7 +53,7 @@ class Request
 	 * @param  array $post   variables provided to the presenter via POST
 	 * @param  array $files   all uploaded files
 	 */
-	public function __construct(string $name, string $method = NULL, array $params = [], array $post = [], array $files = [], array $flags = [])
+	public function __construct(string $name, string $method = null, array $params = [], array $post = [], array $files = [], array $flags = [])
 	{
 		$this->name = $name;
 		$this->method = $method;
@@ -177,7 +177,7 @@ class Request
 	 * Sets the flag.
 	 * @return static
 	 */
-	public function setFlag(string $flag, bool $value = TRUE)
+	public function setFlag(string $flag, bool $value = true)
 	{
 		$this->flags[$flag] = $value;
 		return $this;
