@@ -17,7 +17,7 @@ use Nette\Utils\Strings;
  * The bidirectional route is responsible for mapping
  * HTTP request to an array for dispatch and vice-versa.
  */
-class Route implements IRouter
+class Route implements Router
 {
 	use Nette\SmartObject;
 

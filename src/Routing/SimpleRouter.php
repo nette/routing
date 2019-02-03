@@ -15,7 +15,7 @@ use Nette;
 /**
  * The bidirectional route for trivial routing via query parameters.
  */
-class SimpleRouter implements IRouter
+class SimpleRouter implements Router
 {
 	use Nette\SmartObject;
 

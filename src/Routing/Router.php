@@ -15,7 +15,7 @@ use Nette;
 /**
  * The bi-directional router.
  */
-interface IRouter
+interface Router
 {
 	/** for back compatibility */
 	public const ONE_WAY = 0b0001;

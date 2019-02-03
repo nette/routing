@@ -15,7 +15,7 @@ use Nette;
 /**
  * The router broker.
  */
-class RouteList extends Nette\Utils\ArrayList implements IRouter
+class RouteList extends Nette\Utils\ArrayList implements Router
 {
 	/** @var array */
 	private $cachedRoutes;
@@ -74,12 +74,12 @@ class RouteList extends Nette\Utils\ArrayList implements IRouter
 	/**
 	 * Adds the router.
 	 * @param  mixed  $index
-	 * @param  IRouter  $route
+	 * @param  Router  $route
 	 */
 	public function offsetSet($index, $route): void
 	{
-		if (!$route instanceof IRouter) {
-			throw new Nette\InvalidArgumentException('Argument must be IRouter descendant.');
+		if (!$route instanceof Router) {
+			throw new Nette\InvalidArgumentException('Argument must be Nette\Routing\Router descendant.');
 		}
 		parent::offsetSet($index, $route);
 	}
