@@ -20,7 +20,7 @@ class SimpleRouter implements Application\IRouter
 {
 	use Nette\SmartObject;
 
-	public const
+	private const
 		PRESENTER_KEY = 'presenter',
 		MODULE_KEY = 'module';
 
