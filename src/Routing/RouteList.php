@@ -17,18 +17,12 @@ use Nette;
  */
 class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRouter
 {
-	private const PRESENTER_KEY = 'presenter';
-
 	/** @var array */
 	private $cachedRoutes;
 
-	/** @var string|null */
-	private $module;
 
-
-	public function __construct(string $module = null)
+	public function __construct()
 	{
-		$this->module = $module ? $module . ':' : null;
 	}
 
 
@@ -40,9 +34,6 @@ class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRout
 		foreach ($this as $route) {
 			$params = $route->match($httpRequest);
 			if ($params !== null) {
-				if (strncmp($params[self::PRESENTER_KEY], 'Nette:', 6)) {
-					$params[self::PRESENTER_KEY] = $this->module . $params[self::PRESENTER_KEY];
-				}
 				return $params;
 			}
 		}
@@ -59,20 +50,7 @@ class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRout
 			$this->warmupCache();
 		}
 
-		if ($this->module) {
-			if (strncmp($params[self::PRESENTER_KEY], $this->module, strlen($this->module)) === 0) {
-				$params[self::PRESENTER_KEY] = substr($tmp, strlen($this->module));
-			} else {
-				return null;
-			}
-		}
-
-		$presenter = $params[self::PRESENTER_KEY];
-		if (!isset($this->cachedRoutes[$presenter])) {
-			$presenter = '*';
-		}
-
-		foreach ($this->cachedRoutes[$presenter] as $route) {
+		foreach ($this->cachedRoutes as $route) {
 			$url = $route->constructUrl($params, $refUrl);
 			if ($url !== null) {
 				return $url;
@@ -86,21 +64,9 @@ class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRout
 	public function warmupCache(): void
 	{
 		$routes = [];
-		$routes['*'] = [];
-
 		foreach ($this as $route) {
-			$presenters = $route instanceof Route && is_array($tmp = $route->getTargetPresenters())
-				? $tmp
-				: array_keys($routes);
-
-			foreach ($presenters as $presenter) {
-				if (!isset($routes[$presenter])) {
-					$routes[$presenter] = $routes['*'];
-				}
-				$routes[$presenter][] = $route;
-			}
+			$routes[] = $route;
 		}
-
 		$this->cachedRoutes = $routes;
 	}
 
@@ -116,11 +82,5 @@ class RouteList extends Nette\Utils\ArrayList implements Nette\Application\IRout
 			throw new Nette\InvalidArgumentException('Argument must be IRouter descendant.');
 		}
 		parent::offsetSet($index, $route);
-	}
-
-
-	public function getModule(): ?string
-	{
-		return $this->module;
 	}
 }

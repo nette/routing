@@ -20,29 +20,25 @@ $route = new Route('[<one [a-z]+><two [0-9]+>]', [
 ]);
 
 testRouteIn($route, '/a1', [
-	'presenter' => 'querypresenter',
 	'one' => 'a',
 	'two' => '1',
 	'test' => 'testvalue',
-], '/?presenter=querypresenter&test=testvalue');
+], '/?test=testvalue');
 
 testRouteIn($route, '/x1', [
-	'presenter' => 'querypresenter',
 	'one' => 'x',
 	'two' => '1',
 	'test' => 'testvalue',
-], '/x1?presenter=querypresenter&test=testvalue');
+], '/x1?test=testvalue');
 
 testRouteIn($route, '/a2', [
-	'presenter' => 'querypresenter',
 	'one' => 'a',
 	'two' => '2',
 	'test' => 'testvalue',
-], '/a2?presenter=querypresenter&test=testvalue');
+], '/a2?test=testvalue');
 
 testRouteIn($route, '/x2', [
-	'presenter' => 'querypresenter',
 	'one' => 'x',
 	'two' => '2',
 	'test' => 'testvalue',
-], '/x2?presenter=querypresenter&test=testvalue');
+], '/x2?test=testvalue');

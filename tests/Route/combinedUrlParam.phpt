@@ -15,7 +15,7 @@ require __DIR__ . '/Route.php';
 
 
 $route = new Route('extra<presenter>/<action>', [
-	'presenter' => 'Default',
+	'presenter' => 'default',
 	'action' => 'default',
 ]);
 
@@ -23,19 +23,19 @@ $route = new Route('extra<presenter>/<action>', [
 testRouteIn($route, '/presenter/action/');
 
 testRouteIn($route, '/extrapresenter/action/', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'test' => 'testvalue',
 ], '/extrapresenter/action?test=testvalue');
 
 testRouteIn($route, '/extradefault/default/', [
-	'presenter' => 'Default',
+	'presenter' => 'default',
 	'action' => 'default',
 	'test' => 'testvalue',
 ], '/extra?test=testvalue');
 
 testRouteIn($route, '/extra', [
-	'presenter' => 'Default',
+	'presenter' => 'default',
 	'action' => 'default',
 	'test' => 'testvalue',
 ], '/extra?test=testvalue');

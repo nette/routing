@@ -45,3 +45,11 @@ Assert::same('http://nette.org/file.php?presenter=myPresenter&action=action&test
 $url = new Http\UrlScript('https://nette.org/file.php');
 $res = $router->constructUrl($params, $url);
 Assert::same('https://nette.org/file.php?presenter=myPresenter&action=action&test=testvalue', $res);
+
+
+test(function () {
+	$router = new SimpleRouter;
+	$url = new Http\UrlScript('http://nette.org');
+	$httpRequest = new Http\Request($url);
+	Assert::same([], $router->match($httpRequest));
+});

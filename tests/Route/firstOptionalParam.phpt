@@ -15,21 +15,21 @@ require __DIR__ . '/Route.php';
 
 
 $route = new Route('<presenter>/<action>/<id \d{1,3}>', [
-	'presenter' => 'Default',
+	'presenter' => 'default',
 	'id' => null,
 ]);
 
 testRouteIn($route, '/presenter/action/12/any');
 
 testRouteIn($route, '/presenter/action/12/', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => '12',
 	'test' => 'testvalue',
 ], '/presenter/action/12?test=testvalue');
 
 testRouteIn($route, '/presenter/action/12', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => '12',
 	'test' => 'testvalue',
@@ -38,14 +38,14 @@ testRouteIn($route, '/presenter/action/12', [
 testRouteIn($route, '/presenter/action/1234');
 
 testRouteIn($route, '/presenter/action/', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => null,
 	'test' => 'testvalue',
 ], '/presenter/action/?test=testvalue');
 
 testRouteIn($route, '/presenter/action', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => null,
 	'test' => 'testvalue',

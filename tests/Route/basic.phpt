@@ -17,25 +17,23 @@ require __DIR__ . '/Route.php';
 
 $route = new Route('<presenter>/<action=default>/<id= \d{1,3}>');
 
-Assert::same('http://example.com/homepage/', testRouteOut($route, ['presenter' => 'Homepage']));
+Assert::same('http://example.com/homepage/', testRouteOut($route, ['presenter' => 'homepage']));
 
-Assert::same('http://example.com/homepage/', testRouteOut($route, ['presenter' => 'Homepage', 'action' => 'default']));
+Assert::same('http://example.com/homepage/', testRouteOut($route, ['presenter' => 'homepage', 'action' => 'default']));
 
-Assert::null(testRouteOut($route, ['presenter' => 'Homepage', 'id' => 'word']));
-
-Assert::same('http://example.com/front.homepage/', testRouteOut($route, ['presenter' => 'Front:Homepage']));
+Assert::null(testRouteOut($route, ['presenter' => 'homepage', 'id' => 'word']));
 
 testRouteIn($route, '/presenter/action/12/any');
 
 testRouteIn($route, '/presenter/action/12/', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => '12',
 	'test' => 'testvalue',
 ], '/presenter/action/12?test=testvalue');
 
 testRouteIn($route, '/presenter/action/12', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => '12',
 	'test' => 'testvalue',
@@ -44,28 +42,28 @@ testRouteIn($route, '/presenter/action/12', [
 testRouteIn($route, '/presenter/action/1234');
 
 testRouteIn($route, '/presenter/action/', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => '',
 	'test' => 'testvalue',
 ], '/presenter/action/?test=testvalue');
 
 testRouteIn($route, '/presenter/action', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => '',
 	'test' => 'testvalue',
 ], '/presenter/action/?test=testvalue');
 
 testRouteIn($route, '/presenter/', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'id' => '',
 	'action' => 'default',
 	'test' => 'testvalue',
 ], '/presenter/?test=testvalue');
 
 testRouteIn($route, '/presenter', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'id' => '',
 	'action' => 'default',
 	'test' => 'testvalue',

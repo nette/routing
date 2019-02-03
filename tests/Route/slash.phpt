@@ -15,20 +15,15 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/Route.php';
 
 
-$route = new Route('<param>', [
-	'presenter' => 'Presenter',
-]);
+$route = new Route('<param>');
 
 testRouteIn($route, '/a/b');
-Assert::null(testRouteOut($route, ['presenter' => 'Presenter', 'param' => 'a/b']));
+Assert::null(testRouteOut($route, ['param' => 'a/b']));
 
 
-$route = new Route('<param .+>', [
-	'presenter' => 'Presenter',
-]);
+$route = new Route('<param .+>');
 
 testRouteIn($route, '/a/b', [
-	'presenter' => 'Presenter',
 	'param' => 'a/b',
 	'test' => 'testvalue',
 ], '/a/b?test=testvalue');

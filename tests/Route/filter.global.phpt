@@ -18,7 +18,7 @@ require __DIR__ . '/Route.php';
 $route = new Route('<presenter>', [
 	null => [
 		Route::FILTER_IN => function (array $arr) {
-			if (substr($arr['presenter'], 0, 3) !== 'Abc') {
+			if (substr($arr['presenter'], 0, 3) !== 'abc') {
 				return null;
 			}
 			$arr['presenter'] .= '.in';
@@ -26,7 +26,7 @@ $route = new Route('<presenter>', [
 			return $arr;
 		},
 		Route::FILTER_OUT => function (array $arr) {
-			if (substr($arr['presenter'], 0, 3) !== 'Abc') {
+			if (substr($arr['presenter'], 0, 3) !== 'abc') {
 				return null;
 			}
 			$arr['presenter'] .= '.out';
@@ -37,32 +37,32 @@ $route = new Route('<presenter>', [
 ]);
 
 testRouteIn($route, '/abc?param=1', [
-	'presenter' => 'Abc.in',
+	'presenter' => 'abc.in',
 	'param' => '1.in',
 	'test' => 'testvalue',
 ], '/abc.in.out?param=1.in.out&test=testvalue');
 
 testRouteIn($route, '/cde?param=1');
 
-Assert::null(testRouteOut($route, ['presenter' => 'Cde']));
+Assert::null(testRouteOut($route, ['presenter' => 'cde']));
 
 
 $route = new Route('<lang>/<presenter>/<action>', [
 	null => [
 		Route::FILTER_IN => function (array $arr) {
-			if ($arr['presenter'] !== 'AbcCs') {
+			if ($arr['presenter'] !== 'abc-cs') {
 				return null;
 			}
-			$arr['presenter'] = substr($arr['presenter'], 0, -2); // AbcCs -> Abc
-			$arr['action'] = substr($arr['action'], 0, -2);
+			$arr['presenter'] = substr($arr['presenter'], 0, -3);
+			$arr['action'] = substr($arr['action'], 0, -3);
 			return $arr;
 		},
 		Route::FILTER_OUT => function (array $arr) {
-			if ($arr['presenter'] !== 'Abc') {
+			if ($arr['presenter'] !== 'abc') {
 				return null;
 			}
-			$arr['presenter'] .= ucfirst($arr['lang']); // Abc -> AbcCs
-			$arr['action'] .= ucfirst($arr['lang']);
+			$arr['presenter'] .= '-' . $arr['lang'];
+			$arr['action'] .= '-' . $arr['lang'];
 			return $arr;
 		},
 	],
@@ -70,7 +70,7 @@ $route = new Route('<lang>/<presenter>/<action>', [
 
 
 testRouteIn($route, '/cs/abc-cs/def-cs', [
-	'presenter' => 'Abc',
+	'presenter' => 'abc',
 	'lang' => 'cs',
 	'action' => 'def',
 	'test' => 'testvalue',
@@ -78,5 +78,5 @@ testRouteIn($route, '/cs/abc-cs/def-cs', [
 
 Assert::same(
 	'http://example.com/cs/abc-cs/def-cs?test=testvalue',
-	testRouteOut($route, ['presenter' => 'Abc', 'lang' => 'cs', 'action' => 'def', 'test' => 'testvalue'])
+	testRouteOut($route, ['presenter' => 'abc', 'lang' => 'cs', 'action' => 'def', 'test' => 'testvalue'])
 );

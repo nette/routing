@@ -14,26 +14,21 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/Route.php';
 
 
-$route = new Route('<param .*>', [
-	'presenter' => 'Presenter',
-]);
+$route = new Route('<param .*>');
 
 testRouteIn($route, '/a%3A%25%2Fb', [
-	'presenter' => 'Presenter',
 	'param' => 'a:%/b',
 	'test' => 'testvalue',
 ], '/a%3A%25/b?test=testvalue');
 
 
 $route = new Route('<param .*>', [
-	'presenter' => 'Presenter',
 	'param' => [
 		Route::FILTER_OUT => 'rawurlencode',
 	],
 ]);
 
 testRouteIn($route, '/a%3A%25%2Fb', [
-	'presenter' => 'Presenter',
 	'param' => 'a:%/b',
 	'test' => 'testvalue',
 ], '/a%3A%25%2Fb?test=testvalue');

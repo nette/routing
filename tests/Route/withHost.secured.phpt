@@ -16,38 +16,32 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/Route.php';
 
 
-$route = new Route('//example.org/test', [
-	'presenter' => 'Default',
-	'action' => 'default',
-]);
+$route = new Route('//example.org/test');
 
 $url = $route->constructUrl(
-	['presenter' => 'Default', 'action' => 'default'],
+	[],
 	new Url('https://example.org')
 );
 Assert::same('https://example.org/test', $url);
 
 $url = $route->constructUrl(
-	['presenter' => 'Default', 'action' => 'default'],
+	[],
 	new Url('https://example.com')
 );
 Assert::same('https://example.org/test', $url);
 
 
 
-$route = new Route('https://example.org/test', [
-	'presenter' => 'Default',
-	'action' => 'default',
-]);
+$route = new Route('https://example.org/test');
 
 $url = $route->constructUrl(
-	['presenter' => 'Default', 'action' => 'default'],
+	[],
 	new Url('https://example.org')
 );
 Assert::same('https://example.org/test', $url);
 
 $url = $route->constructUrl(
-	['presenter' => 'Default', 'action' => 'default'],
+	[],
 	new Url('https://example.com')
 );
 Assert::same('https://example.org/test', $url);

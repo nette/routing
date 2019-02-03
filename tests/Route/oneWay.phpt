@@ -15,12 +15,12 @@ require __DIR__ . '/Route.php';
 
 
 $route = new Route('<presenter>/<action>', [
-	'presenter' => 'Default',
+	'presenter' => 'default',
 	'action' => 'default',
 ], Route::ONE_WAY);
 
 testRouteIn($route, '/presenter/action/', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'test' => 'testvalue',
 ], null);

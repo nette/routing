@@ -15,18 +15,18 @@ require __DIR__ . '/Route.php';
 
 
 $route = new Route('<action> ? <presenter>', [
-	'presenter' => 'Default',
+	'presenter' => 'default',
 	'action' => 'default',
 ]);
 
 testRouteIn($route, '/action/', [
-	'presenter' => 'querypresenter',
+	'presenter' => 'default',
 	'action' => 'action',
 	'test' => 'testvalue',
-], '/action?presenter=querypresenter&test=testvalue');
+], '/action?test=testvalue');
 
 testRouteIn($route, '/', [
-	'presenter' => 'querypresenter',
 	'action' => 'default',
+	'presenter' => 'default',
 	'test' => 'testvalue',
-], '/?presenter=querypresenter&test=testvalue');
+], '/?test=testvalue');

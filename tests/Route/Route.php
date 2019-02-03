@@ -15,7 +15,6 @@ function testRouteIn(Nette\Application\IRouter $route, string $url, array $expec
 	$url->setScriptPath('/');
 	$url->appendQuery([
 		'test' => 'testvalue',
-		'presenter' => 'querypresenter',
 	]);
 
 	$httpRequest = new Nette\Http\Request($url);

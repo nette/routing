@@ -16,12 +16,10 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/Route.php';
 
 
-$route = new Route('<param>', [
-	'presenter' => 'Presenter',
-]);
+$route = new Route('<param>');
 
 $url = $route->constructUrl(
-	['presenter' => 'Presenter', 'param' => 'any'],
+	['param' => 'any'],
 	new Url('https://example.org')
 );
 Assert::same('https://example.org/any', $url);

@@ -20,28 +20,25 @@ $route = new Route('[!<lang [a-z]{2}>[-<sub>]/]<name>[/page-<page>]', [
 ]);
 
 testRouteIn($route, '/cs-cz/name', [
-	'presenter' => 'querypresenter',
 	'lang' => 'cs',
 	'sub' => 'cz',
 	'name' => 'name',
 	'page' => null,
 	'test' => 'testvalue',
-], '/cs/name?presenter=querypresenter&test=testvalue');
+], '/cs/name?test=testvalue');
 
 testRouteIn($route, '/cs-xx/name', [
-	'presenter' => 'querypresenter',
 	'lang' => 'cs',
 	'sub' => 'xx',
 	'name' => 'name',
 	'page' => null,
 	'test' => 'testvalue',
-], '/cs-xx/name?presenter=querypresenter&test=testvalue');
+], '/cs-xx/name?test=testvalue');
 
 testRouteIn($route, '/name', [
-	'presenter' => 'querypresenter',
 	'name' => 'name',
 	'sub' => 'cz',
 	'lang' => 'cs',
 	'page' => null,
 	'test' => 'testvalue',
-], '/cs/name?presenter=querypresenter&test=testvalue');
+], '/cs/name?test=testvalue');

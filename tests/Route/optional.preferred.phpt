@@ -18,11 +18,9 @@ $route = new Route('index[!.html]', [
 ]);
 
 testRouteIn($route, '/index.html', [
-	'presenter' => 'querypresenter',
 	'test' => 'testvalue',
-], '/index.html?presenter=querypresenter&test=testvalue');
+], '/index.html?test=testvalue');
 
 testRouteIn($route, '/index', [
-	'presenter' => 'querypresenter',
 	'test' => 'testvalue',
-], '/index.html?presenter=querypresenter&test=testvalue');
+], '/index.html?test=testvalue');

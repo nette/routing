@@ -14,14 +14,9 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/Route.php';
 
 
-$route = new Route('/<abspath>/', [
-	'presenter' => 'Default',
-	'action' => 'default',
-]);
+$route = new Route('/<abspath>/');
 
 testRouteIn($route, '/abc', [
-	'presenter' => 'Default',
 	'abspath' => 'abc',
-	'action' => 'default',
 	'test' => 'testvalue',
 ], '/abc/?test=testvalue');

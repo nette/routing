@@ -15,12 +15,10 @@ require __DIR__ . '/Route.php';
 
 
 $route = new Route(' ? arr=<arr>', [
-	'presenter' => 'Default',
 	'arr' => '',
 ]);
 
 testRouteIn($route, '/?arr[1]=1&arr[2]=2', [
-	'presenter' => 'Default',
 	'arr' => [
 		1 => '1',
 		2 => '2',

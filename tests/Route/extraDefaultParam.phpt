@@ -21,7 +21,7 @@ $route = new Route('<presenter>/<action>/<id \d{1,3}>/', [
 testRouteIn($route, '/presenter/action/12/any');
 
 testRouteIn($route, '/presenter/action/12', [
-	'presenter' => 'Presenter',
+	'presenter' => 'presenter',
 	'action' => 'action',
 	'id' => '12',
 	'extra' => null,

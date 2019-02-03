@@ -20,13 +20,6 @@ class SimpleRouter implements Application\IRouter
 {
 	use Nette\SmartObject;
 
-	private const
-		PRESENTER_KEY = 'presenter',
-		MODULE_KEY = 'module';
-
-	/** @var string */
-	private $module = '';
-
 	/** @var array */
 	private $defaults;
 
@@ -34,24 +27,8 @@ class SimpleRouter implements Application\IRouter
 	private $flags;
 
 
-	public function __construct($defaults = [], int $flags = 0)
+	public function __construct(array $defaults = [], int $flags = 0)
 	{
-		if (is_string($defaults)) {
-			[$presenter, $action] = Nette\Application\Helpers::splitName($defaults);
-			if (!$presenter) {
-				throw new Nette\InvalidArgumentException("Argument must be array or string in format Presenter:action, '$defaults' given.");
-			}
-			$defaults = [
-				self::PRESENTER_KEY => $presenter,
-				'action' => $action === '' ? Application\UI\Presenter::DEFAULT_ACTION : $action,
-			];
-		}
-
-		if (isset($defaults[self::MODULE_KEY])) {
-			$this->module = $defaults[self::MODULE_KEY] . ':';
-			unset($defaults[self::MODULE_KEY]);
-		}
-
 		$this->defaults = $defaults;
 		$this->flags = $flags;
 	}
@@ -62,19 +39,9 @@ class SimpleRouter implements Application\IRouter
 	 */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
 	{
-		if ($httpRequest->getUrl()->getPathInfo() !== '') {
-			return null;
-		}
-		// combine with precedence: get, (post,) defaults
-		$params = $httpRequest->getQuery();
-		$params += $this->defaults;
-
-		if (!isset($params[self::PRESENTER_KEY]) || !is_string($params[self::PRESENTER_KEY])) {
-			return null;
-		}
-
-		$params[self::PRESENTER_KEY] = $this->module . $params[self::PRESENTER_KEY];
-		return $params;
+		return $httpRequest->getUrl()->getPathInfo() === ''
+			? $httpRequest->getQuery() + $this->defaults
+			: null;
 	}
 
 
@@ -84,13 +51,6 @@ class SimpleRouter implements Application\IRouter
 	public function constructUrl(array $params, Nette\Http\Url $refUrl): ?string
 	{
 		if ($this->flags & self::ONE_WAY) {
-			return null;
-		}
-
-		// presenter name
-		if (strncmp($params[self::PRESENTER_KEY], $this->module, strlen($this->module)) === 0) {
-			$params[self::PRESENTER_KEY] = substr($params[self::PRESENTER_KEY], strlen($this->module));
-		} else {
 			return null;
 		}
 

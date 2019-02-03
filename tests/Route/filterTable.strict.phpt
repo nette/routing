@@ -17,17 +17,17 @@ require __DIR__ . '/Route.php';
 $route = new Route('<presenter>', [
 	'presenter' => [
 		Route::FILTER_TABLE => [
-			'produkt' => 'Product',
-			'kategorie' => 'Category',
-			'zakaznik' => 'Customer',
-			'kosik' => 'Basket',
+			'produkt' => 'product',
+			'kategorie' => 'category',
+			'zakaznik' => 'customer',
+			'kosik' => 'basket',
 		],
 		Route::FILTER_STRICT => true,
 	],
 ]);
 
 testRouteIn($route, '/kategorie/', [
-	'presenter' => 'Category',
+	'presenter' => 'category',
 	'test' => 'testvalue',
 ], '/kategorie?test=testvalue');
 

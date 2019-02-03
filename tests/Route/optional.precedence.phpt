@@ -18,19 +18,17 @@ $route = new Route('[<one>/][<two>]', [
 ]);
 
 testRouteIn($route, '/one', [
-	'presenter' => 'querypresenter',
 	'one' => 'one',
 	'two' => null,
 	'test' => 'testvalue',
-], '/one/?presenter=querypresenter&test=testvalue');
+], '/one/?test=testvalue');
 
 $route = new Route('[<one>/]<two>', [
 	'two' => null,
 ]);
 
 testRouteIn($route, '/one', [
-	'presenter' => 'querypresenter',
 	'one' => 'one',
 	'two' => null,
 	'test' => 'testvalue',
-], '/one/?presenter=querypresenter&test=testvalue');
+], '/one/?test=testvalue');

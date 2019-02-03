@@ -14,12 +14,9 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/Route.php';
 
 
-$route = new Route('<parameter-longer-than-32-characters>', [
-	'presenter' => 'Presenter',
-]);
+$route = new Route('<parameter-longer-than-32-characters>');
 
 testRouteIn($route, '/any', [
-	'presenter' => 'Presenter',
 	'parameter-longer-than-32-characters' => 'any',
 	'test' => 'testvalue',
 ], '/any?test=testvalue');

@@ -15,14 +15,14 @@ require __DIR__ . '/Route.php';
 
 
 $route = new Route('index<?.xml>/', [
-	'presenter' => 'DefaultPresenter',
+	'presenter' => 'defaultPresenter',
 ]);
 
 
 testRouteIn($route, '/index.');
 
 testRouteIn($route, '/index.xml', [
-	'presenter' => 'DefaultPresenter',
+	'presenter' => 'defaultPresenter',
 	'test' => 'testvalue',
 ], '/index.xml/?test=testvalue');
 

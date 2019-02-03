@@ -49,33 +49,11 @@ class Route implements Application\IRouter
 		PATH_OPTIONAL = 1,
 		CONSTANT = 2;
 
-	private const
-		PRESENTER_KEY = 'presenter',
-		MODULE_KEY = 'module';
-
-	/** @deprecated */
-	public static $styles = [];
-
 	/** @var array */
 	protected $defaultMeta = [
 		'#' => [ // default style for path parameters
 			self::PATTERN => '[^/]+',
 			self::FILTER_OUT => [__CLASS__, 'param2path'],
-		],
-		'module' => [
-			self::PATTERN => '[a-z][a-z0-9.-]*',
-			self::FILTER_IN => [__CLASS__, 'path2presenter'],
-			self::FILTER_OUT => [__CLASS__, 'presenter2path'],
-		],
-		'presenter' => [
-			self::PATTERN => '[a-z][a-z0-9.-]*',
-			self::FILTER_IN => [__CLASS__, 'path2presenter'],
-			self::FILTER_OUT => [__CLASS__, 'presenter2path'],
-		],
-		'action' => [
-			self::PATTERN => '[a-z][a-z0-9-]*',
-			self::FILTER_IN => [__CLASS__, 'path2action'],
-			self::FILTER_OUT => [__CLASS__, 'action2path'],
 		],
 	];
 
@@ -115,31 +93,9 @@ class Route implements Application\IRouter
 
 	/**
 	 * @param  string  $mask  e.g. '<presenter>/<action>/<id \d{1,3}>'
-	 * @param  array|string|\Closure  $metadata  default values or metadata or callback for NetteModule\MicroPresenter
 	 */
-	public function __construct(string $mask, $metadata = [], int $flags = 0)
+	public function __construct(string $mask, array $metadata = [], int $flags = 0)
 	{
-		if (is_string($metadata)) {
-			[$presenter, $action] = Nette\Application\Helpers::splitName($metadata);
-			if (!$presenter) {
-				throw new Nette\InvalidArgumentException("Second argument must be array or string in format Presenter:action, '$metadata' given.");
-			}
-			$metadata = [self::PRESENTER_KEY => $presenter];
-			if ($action !== '') {
-				$metadata['action'] = $action;
-			}
-		} elseif ($metadata instanceof \Closure) {
-			$metadata = [
-				self::PRESENTER_KEY => 'Nette:Micro',
-				'callback' => $metadata,
-			];
-		}
-
-		if (self::$styles) {
-			trigger_error('Route::$styles is deprecated.', E_USER_DEPRECATED);
-			array_replace_recursive($this->defaultMeta, self::$styles);
-		}
-
 		$this->flags = $flags;
 		$this->setMask($mask, $metadata);
 	}
@@ -243,18 +199,6 @@ class Route implements Application\IRouter
 			}
 		}
 
-		// 5) BUILD Request
-		if (!isset($params[self::PRESENTER_KEY])) {
-			throw new Nette\InvalidStateException('Missing presenter in route definition.');
-		} elseif (!is_string($params[self::PRESENTER_KEY])) {
-			return null;
-		}
-
-		if (isset($this->metadata[self::MODULE_KEY], $params[self::MODULE_KEY])) {
-			$params[self::PRESENTER_KEY] = $params[self::MODULE_KEY] . ':' . $params[self::PRESENTER_KEY];
-		}
-		unset($params[self::MODULE_KEY]);
-
 		return $params;
 	}
 
@@ -269,22 +213,6 @@ class Route implements Application\IRouter
 		}
 
 		$metadata = $this->metadata;
-		$presenter = $params[self::PRESENTER_KEY];
-
-		if (isset($metadata[self::MODULE_KEY])) { // try split into module and [submodule:]presenter parts
-			$module = $metadata[self::MODULE_KEY];
-			if (isset($module[self::FIXITY], $module[self::VALUE]) && strncmp($presenter, $module[self::VALUE] . ':', strlen($module[self::VALUE]) + 1) === 0) {
-				$a = strlen($module[self::VALUE]);
-			} else {
-				$a = strrpos($presenter, ':');
-			}
-			if ($a === false) {
-				$params[self::MODULE_KEY] = isset($module[self::VALUE]) ? '' : null;
-			} else {
-				$params[self::MODULE_KEY] = substr($presenter, 0, $a);
-				$params[self::PRESENTER_KEY] = substr($presenter, $a + 1);
-			}
-		}
 
 		if (isset($metadata[null][self::FILTER_OUT])) {
 			$params = $metadata[null][self::FILTER_OUT]($params);
@@ -619,36 +547,14 @@ class Route implements Application\IRouter
 	}
 
 
-	/********************* Utilities ****************d*g**/
-
-
-	/**
-	 * Proprietary cache aim.
-	 * @internal
-	 * @return string[]|null
-	 */
-	public function getTargetPresenters(): ?array
+	/** @internal */
+	protected function getMetadata(): array
 	{
-		if ($this->flags & self::ONE_WAY) {
-			return [];
-		}
-
-		$m = $this->metadata;
-		$module = '';
-
-		if (isset($m[self::MODULE_KEY])) {
-			if (($m[self::MODULE_KEY][self::FIXITY] ?? null) === self::CONSTANT) {
-				$module = $m[self::MODULE_KEY][self::VALUE] . ':';
-			} else {
-				return null;
-			}
-		}
-
-		if (($m[self::PRESENTER_KEY][self::FIXITY] ?? null) === self::CONSTANT) {
-			return [$module . $m[self::PRESENTER_KEY][self::VALUE]];
-		}
-		return null;
+		return $this->metadata;
 	}
+
+
+	/********************* Utilities ****************d*g**/
 
 
 	/**
@@ -671,59 +577,6 @@ class Route implements Application\IRouter
 			}
 		}
 		return $res;
-	}
-
-
-	/********************* Inflectors ****************d*g**/
-
-
-	/**
-	 * camelCaseAction name -> dash-separated.
-	 */
-	public static function action2path(string $s): string
-	{
-		$s = preg_replace('#(.)(?=[A-Z])#', '$1-', $s);
-		$s = strtolower($s);
-		$s = rawurlencode($s);
-		return $s;
-	}
-
-
-	/**
-	 * dash-separated -> camelCaseAction name.
-	 */
-	public static function path2action(string $s): string
-	{
-		$s = preg_replace('#-(?=[a-z])#', ' ', $s);
-		$s = lcfirst(ucwords($s));
-		$s = str_replace(' ', '', $s);
-		return $s;
-	}
-
-
-	/**
-	 * PascalCase:Presenter name -> dash-and-dot-separated.
-	 */
-	public static function presenter2path(string $s): string
-	{
-		$s = strtr($s, ':', '.');
-		$s = preg_replace('#([^.])(?=[A-Z])#', '$1-', $s);
-		$s = strtolower($s);
-		$s = rawurlencode($s);
-		return $s;
-	}
-
-
-	/**
-	 * dash-and-dot-separated -> PascalCase:Presenter name.
-	 */
-	public static function path2presenter(string $s): string
-	{
-		$s = preg_replace('#([.-])(?=[a-z])#', '$1 ', $s);
-		$s = ucwords($s);
-		$s = str_replace('. ', ':', $s);
-		$s = str_replace('- ', '', $s);
-		return $s;
 	}
 
 
