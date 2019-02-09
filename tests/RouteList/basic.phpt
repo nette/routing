@@ -13,8 +13,6 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-require __DIR__ . '/Route.php';
-
 
 $list = new RouteList;
 $list[] = new Route('<presenter>/<action=default>/<id= \d{1,3}>');
