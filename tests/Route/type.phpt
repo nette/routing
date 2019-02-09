@@ -11,8 +11,6 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-require __DIR__ . '/Route.php';
-
 
 $route = new Route('<id=5>');
 $request = new Request('p', null, ['id' => 5]);

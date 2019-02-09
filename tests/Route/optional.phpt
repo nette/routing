@@ -9,8 +9,6 @@ use Nette\Application\Routers\Route;
 
 require __DIR__ . '/../bootstrap.php';
 
-require __DIR__ . '/Route.php';
-
 
 $route = new Route('index[.html]', [
 ]);

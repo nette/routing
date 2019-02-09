@@ -10,8 +10,6 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-require __DIR__ . '/Route.php';
-
 
 testRouteIn(new Route('//<?%domain%>/<path>', 'Default:default'), '/abc', 'Default', [
 	'path' => 'abc',
