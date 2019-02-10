@@ -23,14 +23,10 @@ class SimpleRouter implements Application\IRouter
 	/** @var array */
 	private $defaults;
 
-	/** @var int */
-	private $flags;
 
-
-	public function __construct(array $defaults = [], int $flags = 0)
+	public function __construct(array $defaults = [])
 	{
 		$this->defaults = $defaults;
-		$this->flags = $flags;
 	}
 
 
@@ -50,10 +46,6 @@ class SimpleRouter implements Application\IRouter
 	 */
 	public function constructUrl(array $params, Nette\Http\Url $refUrl): ?string
 	{
-		if ($this->flags & self::ONE_WAY) {
-			return null;
-		}
-
 		// remove default values; null values are retain
 		foreach ($this->defaults as $key => $value) {
 			if (isset($params[$key]) && $params[$key] == $value) { // intentionally ==
@@ -77,14 +69,5 @@ class SimpleRouter implements Application\IRouter
 	public function getDefaults(): array
 	{
 		return $this->defaults;
-	}
-
-
-	/**
-	 * Returns flags.
-	 */
-	public function getFlags(): int
-	{
-		return $this->flags;
 	}
 }

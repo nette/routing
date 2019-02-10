@@ -81,9 +81,6 @@ class Route implements Application\IRouter
 	/** @var string  http | https */
 	private $scheme;
 
-	/** @var int */
-	private $flags;
-
 	/** @var Nette\Http\Url */
 	private $lastRefUrl;
 
@@ -94,9 +91,8 @@ class Route implements Application\IRouter
 	/**
 	 * @param  string  $mask  e.g. '<presenter>/<action>/<id \d{1,3}>'
 	 */
-	public function __construct(string $mask, array $metadata = [], int $flags = 0)
+	public function __construct(string $mask, array $metadata = [])
 	{
-		$this->flags = $flags;
 		$this->setMask($mask, $metadata);
 	}
 
@@ -208,10 +204,6 @@ class Route implements Application\IRouter
 	 */
 	public function constructUrl(array $params, Nette\Http\Url $refUrl): ?string
 	{
-		if ($this->flags & self::ONE_WAY) {
-			return null;
-		}
-
 		$metadata = $this->metadata;
 
 		if (isset($metadata[null][self::FILTER_OUT])) {
@@ -535,15 +527,6 @@ class Route implements Application\IRouter
 			}
 		}
 		return $defaults;
-	}
-
-
-	/**
-	 * Returns flags.
-	 */
-	public function getFlags(): int
-	{
-		return $this->flags;
 	}
 
 

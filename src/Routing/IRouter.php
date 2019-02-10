@@ -17,7 +17,7 @@ use Nette;
  */
 interface IRouter
 {
-	/** only matching route */
+	/** for back compatibility */
 	public const ONE_WAY = 0b0001;
 
 	/**
