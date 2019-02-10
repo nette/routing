@@ -19,7 +19,7 @@ class RouteList implements Router
 {
 	use Nette\SmartObject;
 
-	/** @var Router[] */
+	/** @var array of [Router, flags] */
 	private $list = [];
 
 	/** @var array */
@@ -36,8 +36,8 @@ class RouteList implements Router
 	 */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
 	{
-		foreach ($this->list as $route) {
-			$params = $route->match($httpRequest);
+		foreach ($this->list as [$router]) {
+			$params = $router->match($httpRequest);
 			if ($params !== null) {
 				return $params;
 			}
@@ -69,8 +69,11 @@ class RouteList implements Router
 	public function warmupCache(): void
 	{
 		$routes = [];
-		foreach ($this->list as $route) {
-			$routes[] = $route;
+		foreach ($this->list as [$router, $flags]) {
+			if ($flags & self::ONE_WAY) {
+				continue;
+			}
+			$routes[] = $router;
 		}
 		$this->cachedRoutes = $routes;
 	}
@@ -80,9 +83,9 @@ class RouteList implements Router
 	 * Adds a router.
 	 * @return static
 	 */
-	public function add(Router $router)
+	public function add(Router $router, int $flags = 0)
 	{
-		$this->list[] = $router;
+		$this->list[] = [$router, $flags];
 		return $this;
 	}
 
@@ -90,9 +93,9 @@ class RouteList implements Router
 	/**
 	 * Prepends a router.
 	 */
-	public function prepend(Router $router): void
+	public function prepend(Router $router, int $flags = 0): void
 	{
-		array_splice($this->list, 0, 0, [$router]);
+		array_splice($this->list, 0, 0, [[$router, $flags]]);
 	}
 
 
@@ -102,7 +105,7 @@ class RouteList implements Router
 		if (!isset($this->list[$index])) {
 			throw new Nette\OutOfRangeException('Offset invalid or out of range');
 		} elseif ($router) {
-			$this->list[$index] = $router;
+			$this->list[$index] = [$router, 0];
 		} else {
 			array_splice($this->list, $index, 1);
 		}
@@ -114,6 +117,6 @@ class RouteList implements Router
 	 */
 	public function getRouters(): array
 	{
-		return $this->list;
+		return array_column($this->list, 0);
 	}
 }
