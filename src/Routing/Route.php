@@ -531,6 +531,19 @@ class Route implements Router
 	}
 
 
+	/** @internal */
+	public function getConstantParameters(): array
+	{
+		$res = [];
+		foreach ($this->metadata as $name => $meta) {
+			if (isset($meta[self::FIXITY]) && $meta[self::FIXITY] === self::CONSTANT) {
+				$res[$name] = $meta[self::VALUE];
+			}
+		}
+		return $res;
+	}
+
+
 	/********************* Utilities ****************d*g**/
 
 

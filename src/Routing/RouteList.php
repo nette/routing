@@ -22,8 +22,11 @@ class RouteList implements Router
 	/** @var array of [Router, flags] */
 	private $list = [];
 
-	/** @var array */
-	private $cachedRoutes;
+	/** @var Router[][]|null */
+	private $ranks;
+
+	/** @var string */
+	private $cacheKey;
 
 
 	public function __construct()
@@ -51,12 +54,17 @@ class RouteList implements Router
 	 */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
-		if ($this->cachedRoutes === null) {
+		if ($this->ranks === null) {
 			$this->warmupCache();
 		}
 
-		foreach ($this->cachedRoutes as $route) {
-			$url = $route->constructUrl($params, $refUrl);
+		$key = $params[$this->cacheKey] ?? null;
+		if (!is_scalar($key) || !isset($this->ranks[$key])) {
+			$key = '*';
+		}
+
+		foreach ($this->ranks[$key] as $router) {
+			$url = $router->constructUrl($params, $refUrl);
 			if ($url !== null) {
 				return $url;
 			}
@@ -68,14 +76,51 @@ class RouteList implements Router
 
 	public function warmupCache(): void
 	{
-		$routes = [];
+		// find best key
+		$candidates = [];
+		$routers = [];
 		foreach ($this->list as [$router, $flags]) {
 			if ($flags & self::ONE_WAY) {
 				continue;
+			} elseif ($router instanceof self) {
+				$router->warmupCache();
 			}
-			$routes[] = $router;
+			$params = $router instanceof Route
+				? $router->getConstantParameters()
+				: [];
+
+			foreach (array_filter($params, 'is_scalar') as $name => $value) {
+				$candidates[$name][$value] = true;
+			}
+			$routers[] = [$router, $params];
 		}
-		$this->cachedRoutes = $routes;
+
+		$this->cacheKey = $count = null;
+		foreach ($candidates as $name => $items) {
+			if (count($items) > $count) {
+				$count = count($items);
+				$this->cacheKey = $name;
+			}
+		}
+
+		// classify routers
+		$ranks = ['*' => []];
+
+		foreach ($routers as [$router, $params]) {
+			$value = $params[$this->cacheKey] ?? null;
+			$values = $value === null
+				? array_keys($ranks)
+				: [is_scalar($value) ? $value : '*'];
+
+			foreach ($values as $value) {
+				if (!isset($ranks[$value])) {
+					$ranks[$value] = $ranks['*'];
+				}
+				$ranks[$value][] = $router;
+			}
+		}
+
+		$this->ranks = $ranks;
 	}
 
 
@@ -86,6 +131,7 @@ class RouteList implements Router
 	public function add(Router $router, int $flags = 0)
 	{
 		$this->list[] = [$router, $flags];
+		$this->ranks = null;
 		return $this;
 	}
 
@@ -96,6 +142,7 @@ class RouteList implements Router
 	public function prepend(Router $router, int $flags = 0): void
 	{
 		array_splice($this->list, 0, 0, [[$router, $flags]]);
+		$this->ranks = null;
 	}
 
 
@@ -109,6 +156,7 @@ class RouteList implements Router
 		} else {
 			array_splice($this->list, $index, 1);
 		}
+		$this->ranks = null;
 	}
 
 
