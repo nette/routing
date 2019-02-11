@@ -80,12 +80,6 @@ class Route implements Router
 	/** @var string  http | https */
 	private $scheme;
 
-	/** @var Nette\Http\Url */
-	private $lastRefUrl;
-
-	/** @var string */
-	private $lastBaseUrl;
-
 
 	/**
 	 * @param  string  $mask  e.g. '<presenter>/<action>/<id \d{1,3}>'
@@ -296,7 +290,14 @@ class Route implements Router
 
 		$scheme = $this->scheme ?: $refUrl->getScheme();
 
-		if ($this->type === self::HOST) {
+		// absolutize path
+		if ($this->type === self::RELATIVE) {
+			$url = '//' . $refUrl->getAuthority() . $refUrl->getBasePath() . $url;
+
+		} elseif ($this->type === self::PATH) {
+			$url = '//' . $refUrl->getAuthority() . $url;
+
+		} else {
 			$host = $refUrl->getHost();
 			$parts = ip2long($host) ? [$host] : array_reverse(explode('.', $host));
 			$url = strtr($url, [
@@ -306,19 +307,13 @@ class Route implements Router
 				'%sld%' => $parts[1] ?? '',
 				'%host%' => $host,
 			]);
-			$url = $scheme . ':' . $url;
-		} else {
-			if ($this->lastRefUrl !== $refUrl) {
-				$basePath = ($this->type === self::RELATIVE ? $refUrl->getBasePath() : '');
-				$this->lastBaseUrl = $scheme . '://' . $refUrl->getAuthority() . $basePath;
-				$this->lastRefUrl = $refUrl;
-			}
-			$url = $this->lastBaseUrl . $url;
 		}
 
-		if (strpos($url, '//', strlen($scheme) + 3) !== false) {
+		if (strpos($url, '//', 2) !== false) {
 			return null;
 		}
+
+		$url = $scheme . ':' . $url;
 
 		// build query string
 		if ($this->xlat) {
