@@ -23,13 +23,12 @@ function test(\Closure $function): void
 }
 
 
-function testRouteIn(Nette\Routing\Router $route, string $url, array $expectedParams = null, string $expectedUrl = null): void
+function testRouteIn(Nette\Routing\Router $route, string $relativeUrl, array $expectedParams = null, string $expectedUrl = null): void
 {
-	$url = new Nette\Http\UrlScript("http://example.com$url");
-	$url->setScriptPath('/');
-	$url->appendQuery([
+	$url = new Nette\Http\UrlScript("http://example.com$relativeUrl", '/');
+	$url = $url->withQuery([
 		'test' => 'testvalue',
-	]);
+	] + $url->getQueryParameters());
 
 	$httpRequest = new Nette\Http\Request($url);
 
@@ -53,6 +52,6 @@ function testRouteIn(Nette\Routing\Router $route, string $url, array $expectedPa
 
 function testRouteOut(Nette\Routing\Router $route, array $params = []): ?string
 {
-	$url = new Nette\Http\Url('http://example.com');
+	$url = new Nette\Http\UrlScript('http://example.com');
 	return $route->constructUrl($params, $url);
 }

@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-use Nette\Http\Url;
+use Nette\Http\UrlScript;
 use Nette\Routing\Route;
 use Tester\Assert;
 
@@ -18,6 +18,6 @@ $route = new Route('<param>');
 
 $url = $route->constructUrl(
 	['param' => 'any'],
-	new Url('https://example.org')
+	new UrlScript('https://example.org')
 );
 Assert::same('https://example.org/any', $url);

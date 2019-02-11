@@ -43,7 +43,7 @@ class SimpleRouter implements Router
 	/**
 	 * Constructs absolute URL from array.
 	 */
-	public function constructUrl(array $params, Nette\Http\Url $refUrl): ?string
+	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
 		// remove default values; null values are retain
 		foreach ($this->defaults as $key => $value) {

@@ -49,7 +49,7 @@ class RouteList implements Router
 	/**
 	 * Constructs absolute URL from array.
 	 */
-	public function constructUrl(array $params, Nette\Http\Url $refUrl): ?string
+	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
 		if ($this->cachedRoutes === null) {
 			$this->warmupCache();

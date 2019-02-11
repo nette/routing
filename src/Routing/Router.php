@@ -28,5 +28,5 @@ interface Router
 	/**
 	 * Constructs absolute URL from array.
 	 */
-	function constructUrl(array $params, Nette\Http\Url $refUrl): ?string;
+	function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string;
 }

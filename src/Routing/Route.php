@@ -201,7 +201,7 @@ class Route implements Router
 	/**
 	 * Constructs absolute URL from array.
 	 */
-	public function constructUrl(array $params, Nette\Http\Url $refUrl): ?string
+	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
 		$metadata = $this->metadata;
 
