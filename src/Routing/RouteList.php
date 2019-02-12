@@ -19,6 +19,9 @@ class RouteList implements Router
 {
 	use Nette\SmartObject;
 
+	/** @var self|null */
+	protected $parent;
+
 	/** @var array of [Router, flags] */
 	private $list = [];
 
@@ -27,6 +30,15 @@ class RouteList implements Router
 
 	/** @var string */
 	private $cacheKey;
+
+	/** @var string|null */
+	private $domain;
+
+	/** @var string|null */
+	private $path;
+
+	/** @var \SplObjectStorage|null */
+	private $refUrlCache;
 
 
 	public function __construct()
@@ -39,6 +51,22 @@ class RouteList implements Router
 	 */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
 	{
+		if ($this->domain) {
+			$host = $httpRequest->getUrl()->getHost();
+			if ($host !== $this->expandDomain($host)) {
+				return null;
+			}
+		}
+
+		if ($this->path) {
+			$url = $httpRequest->getUrl();
+			if (strncmp($url->getRelativePath(), $this->path, strlen($this->path))) {
+				return null;
+			}
+			$url = $url->withPath($url->getPath(), $url->getBasePath() . $this->path);
+			$httpRequest = $httpRequest->withUrl($url);
+		}
+
 		foreach ($this->list as [$router]) {
 			$params = $router->match($httpRequest);
 			if ($params !== null) {
@@ -54,6 +82,22 @@ class RouteList implements Router
 	 */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
+		if ($this->domain) {
+			if (!isset($this->refUrlCache[$refUrl])) {
+				$this->refUrlCache[$refUrl] = $refUrl->withHost(
+					$this->expandDomain($refUrl->getHost())
+				);
+			}
+			$refUrl = $this->refUrlCache[$refUrl];
+		}
+
+		if ($this->path) {
+			if (!isset($this->refUrlCache[$refUrl])) {
+				$this->refUrlCache[$refUrl] = $refUrl->withPath($refUrl->getBasePath() . $this->path);
+			}
+			$refUrl = $this->refUrlCache[$refUrl];
+		}
+
 		if ($this->ranks === null) {
 			$this->warmupCache();
 		}
@@ -173,10 +217,59 @@ class RouteList implements Router
 
 
 	/**
+	 * Returns an iterator over all routers.
+	 * @return static
+	 */
+	public function withDomain(string $domain)
+	{
+		$router = new static;
+		$router->domain = $domain;
+		$router->refUrlCache = new \SplObjectStorage;
+		$router->parent = $this;
+		$this->add($router);
+		return $router;
+	}
+
+
+	/**
+	 * @return static
+	 */
+	public function withPath(string $path)
+	{
+		$router = new static;
+		$router->path = rtrim($path, '/') . '/';
+		$router->refUrlCache = new \SplObjectStorage;
+		$router->parent = $this;
+		$this->add($router);
+		return $router;
+	}
+
+
+	/**
+	 * @return static
+	 */
+	public function end()
+	{
+		return $this->parent;
+	}
+
+
+	/**
 	 * @return Router[]
 	 */
 	public function getRouters(): array
 	{
 		return array_column($this->list, 0);
+	}
+
+
+	private function expandDomain(string $host): string
+	{
+		$parts = ip2long($host) ? [$host] : array_reverse(explode('.', $host));
+		return strtr($this->domain, [
+			'%tld%' => $parts[0],
+			'%domain%' => isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0],
+			'%sld%' => $parts[1] ?? '',
+		]);
 	}
 }
