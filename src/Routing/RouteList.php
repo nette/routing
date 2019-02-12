@@ -161,6 +161,18 @@ class RouteList implements Router
 
 
 	/**
+	 * @param  string  $mask  e.g. '<presenter>/<action>/<id \d{1,3}>'
+	 * @param  array  $metadata  default values or metadata
+	 * @return static
+	 */
+	public function addRoute(string $mask, $metadata = [], int $flags = 0)
+	{
+		$this->add(new Route($mask, $metadata), $flags);
+		return $this;
+	}
+
+
+	/**
 	 * @return Router[]
 	 */
 	public function getRouters(): array
