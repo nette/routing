@@ -38,4 +38,4 @@ testRouteIn($route, '/name', [
 	'page' => null,
 	'lang' => null,
 	'test' => 'testvalue',
-], null);
+], '//name?test=testvalue');

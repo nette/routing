@@ -309,10 +309,6 @@ class Route implements Router
 			]);
 		}
 
-		if (strpos($url, '//', 2) !== false) {
-			return null;
-		}
-
 		$url = $scheme . ':' . $url;
 
 		// build query string
