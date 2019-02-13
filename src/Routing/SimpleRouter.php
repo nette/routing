@@ -52,7 +52,7 @@ class SimpleRouter implements Router
 			}
 		}
 
-		$url = $refUrl->getScheme() . '://' . $refUrl->getAuthority() . $refUrl->getPath();
+		$url = $refUrl->getHostUrl() . $refUrl->getPath();
 		$sep = ini_get('arg_separator.input');
 		$query = http_build_query($params, '', $sep ? $sep[0] : '&');
 		if ($query != '') { // intentionally ==

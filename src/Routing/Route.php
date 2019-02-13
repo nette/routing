@@ -292,10 +292,10 @@ class Route implements Router
 
 		// absolutize path
 		if ($this->type === self::RELATIVE) {
-			$url = '//' . $refUrl->getAuthority() . $refUrl->getBasePath() . $url;
+			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $refUrl->getBasePath() . $url;
 
 		} elseif ($this->type === self::PATH) {
-			$url = '//' . $refUrl->getAuthority() . $url;
+			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $url;
 
 		} else {
 			$host = $refUrl->getHost();
