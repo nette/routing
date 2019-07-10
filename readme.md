@@ -109,12 +109,11 @@ Because we usually define more than one route, we wrap them into a RouteList.
 
 ```php
 use Nette\Routing\RouteList;
-use Nette\Routing\Route;
 
 $router = new RouteList();
-$router[] = new Route('rss.xml', ...);
-$router[] = new Route('article/<id>', ...);
-$router[] = new Route('<presenter>/<action>[/<id>]', ...);
+$router->addRoute('rss.xml', ...);
+$router->addRoute('article/<id>', ...);
+$router->addRoute('<presenter>/<action>[/<id>]', ...);
 ```
 
 Unlike other frameworks, Nette does not require routes to be named.
