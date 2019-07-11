@@ -235,7 +235,7 @@ class Route implements Router
 				$params[$name] = $meta[self::FILTER_OUT]($params[$name]);
 			}
 
-			if (isset($meta[self::PATTERN]) && !preg_match("#(?:{$meta[self::PATTERN]})\\z#A", rawurldecode((string) $params[$name]))) {
+			if (isset($meta[self::PATTERN]) && !preg_match("#(?:{$meta[self::PATTERN]})$#DA", rawurldecode((string) $params[$name]))) {
 				return null; // pattern not match
 			}
 		}
@@ -359,7 +359,7 @@ class Route implements Router
 		}
 
 		if (strpbrk($mask, '?<>[]') === false) {
-			$this->re = '#' . preg_quote($mask, '#') . '/?\z#A';
+			$this->re = '#' . preg_quote($mask, '#') . '/?$#DA';
 			$this->sequence = [$mask];
 			$this->metadata = $metadata;
 			return;
@@ -490,7 +490,7 @@ class Route implements Router
 		}
 
 		$this->aliases = $aliases;
-		$this->re = '#' . $re . '/?\z#A';
+		$this->re = '#' . $re . '/?$#DA';
 		$this->metadata = $metadata;
 		$this->sequence = $sequence;
 	}
