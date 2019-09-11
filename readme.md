@@ -16,7 +16,7 @@ Desired URL format is set by a *router*. The most plain implementation of router
 Addresses look like this:
 
 ```
-http://example.com/index.php?presenter=Product&action=detail&id=123
+https://example.com/index.php?presenter=Product&action=detail&id=123
 ```
 
 The first parameter of `SimpleRouter` constructor is an array of default parameters.
@@ -39,7 +39,7 @@ All requests must be handled by `index.php` file. This can be accomplished e.g. 
 Class Route can create addresses in pretty much any format one can though of. Let's start with a simple example generating a pretty URL for action `Product:default` with `id = 123`:
 
 ```
-http://example.com/product/detail/123
+https://example.com/product/detail/123
 ```
 
 The following snippet creates a `Route` object, passing path mask as the first argument and specifying default action in the second argument.
@@ -51,7 +51,7 @@ $route = new Route('<controller>/<action>[/<id>]', ['controller' => 'homepage', 
 
 This route is usable by all controllers and actions. Accepts paths such as `/article/edit/10` or `/catalog/list`, because the `id` part is wrapped in square brackets, which marks it as optional.
 
-Because other parameters (`controller` and `action`) do have default values (`Homepage` and `default`), they are optional too. If their value is the same as the default one, they are skipped while URL is generated. Link to `Product:default` generates only `http://example.com/product` and link to `Homepage:default` generates only `http://example.com/`.
+Because other parameters (`controller` and `action`) do have default values (`Homepage` and `default`), they are optional too. If their value is the same as the default one, they are skipped while URL is generated. Link to `Product:default` generates only `https://example.com/product` and link to `Homepage:default` generates only `https://example.com/`.
 
 
 Path Mask
