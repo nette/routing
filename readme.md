@@ -7,6 +7,8 @@ Nette Routing: two-ways URL conversion
 
 Routing is a two-way conversion between URL and presenter action. *Two-way* means that we can both determine what presenter URL links to, but also vice versa: generate URL for given action.
 
+It requires PHP version 7.1 and supports PHP up to 7.4.
+
 
 SimpleRouter
 ------------
