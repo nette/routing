@@ -11,6 +11,7 @@ namespace Nette\Routing;
 
 use Nette;
 use Nette\Utils\Strings;
+use function array_key_exists, is_array, count, strlen;
 
 
 /**
