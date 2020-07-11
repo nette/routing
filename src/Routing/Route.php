@@ -220,7 +220,6 @@ class Route implements Router
 				if ($params[$name] === $meta[self::VALUE]) { // remove default values; null values are retain
 					unset($params[$name]);
 					continue;
-
 				}
 				if ($meta[self::FIXITY] === self::CONSTANT) {
 					return null; // missing or wrong parameter '$name'
