@@ -221,7 +221,8 @@ class Route implements Router
 					unset($params[$name]);
 					continue;
 
-				} elseif ($meta[self::FIXITY] === self::CONSTANT) {
+				}
+				if ($meta[self::FIXITY] === self::CONSTANT) {
 					return null; // missing or wrong parameter '$name'
 				}
 			}
@@ -293,10 +294,10 @@ class Route implements Router
 
 		// absolutize path
 		if ($this->type === self::RELATIVE) {
-			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $refUrl->getBasePath() . $url;
+			$url = (($tmp = $refUrl->getAuthority()) ? '//' . $tmp : '') . $refUrl->getBasePath() . $url;
 
 		} elseif ($this->type === self::PATH) {
-			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $url;
+			$url = (($tmp = $refUrl->getAuthority()) ? '//' . $tmp : '') . $url;
 
 		} else {
 			$host = $refUrl->getHost();
@@ -310,8 +311,6 @@ class Route implements Router
 			]);
 		}
 
-		$url = $scheme . ':' . $url;
-
 		// build query string
 		if ($this->xlat) {
 			$params = self::renameKeys($params, $this->xlat);
@@ -319,11 +318,8 @@ class Route implements Router
 
 		$sep = ini_get('arg_separator.input');
 		$query = http_build_query($params, '', $sep ? $sep[0] : '&');
-		if ($query != '') { // intentionally ==
-			$url .= '?' . $query;
-		}
 
-		return $url;
+		return $scheme . ':' . $url . ($query ? '?' . $query : '');
 	}
 
 
@@ -339,7 +335,7 @@ class Route implements Router
 			$this->type = self::HOST;
 			[, $this->scheme, $mask] = $m;
 
-		} elseif (substr($mask, 0, 1) === '/') {
+		} elseif (strpos($mask, '/') === 0) {
 			$this->type = self::PATH;
 
 		} else {
@@ -374,7 +370,7 @@ class Route implements Router
 		$i = count($parts) - 1;
 
 		// PARSE QUERY PART OF MASK
-		if (isset($parts[$i - 1]) && substr(ltrim($parts[$i - 1]), 0, 1) === '?') {
+		if (isset($parts[$i - 1]) && strpos(ltrim($parts[$i - 1]), '?') === 0) {
 			// name=<parameter-name [pattern]>
 			$matches = Strings::matchAll($parts[$i - 1], '/(?:([a-zA-Z0-9_.-]+)=)?<([^> ]+) *([^>]*)>/');
 
