@@ -46,7 +46,7 @@ $res = $router->constructUrl($params, $url);
 Assert::same('https://nette.org/file.php?presenter=myPresenter&action=action&test=testvalue', $res);
 
 
-test(function () {
+test('', function () {
 	$router = new SimpleRouter;
 	$url = new Http\UrlScript('http://nette.org');
 	$httpRequest = new Http\Request($url);
