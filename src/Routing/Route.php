@@ -279,7 +279,7 @@ class Route implements Router
 			} elseif ($name[0] === '?') { // "foo" parameter
 				continue;
 
-			} elseif (isset($params[$name]) && $params[$name] != '') { // intentionally ==
+			} elseif (isset($params[$name]) && $params[$name] !== '') {
 				$required = count($brackets); // make this level required
 				$url = $params[$name] . $url;
 				unset($params[$name]);
@@ -326,7 +326,7 @@ class Route implements Router
 
 		$sep = ini_get('arg_separator.input');
 		$query = http_build_query($params, '', $sep ? $sep[0] : '&');
-		if ($query != '') { // intentionally ==
+		if ($query !== '') {
 			$url .= '?' . $query;
 		}
 
@@ -454,7 +454,7 @@ class Route implements Router
 			// pattern, condition & metadata
 			$meta = ($metadata[$name] ?? []) + ($this->defaultMeta[$name] ?? $this->defaultMeta['#']);
 
-			if ($pattern == '' && isset($meta[self::PATTERN])) {
+			if ($pattern === '' && isset($meta[self::PATTERN])) {
 				$pattern = $meta[self::PATTERN];
 			}
 

@@ -47,7 +47,7 @@ class SimpleRouter implements Router
 	{
 		// remove default values; null values are retain
 		foreach ($this->defaults as $key => $value) {
-			if (isset($params[$key]) && $params[$key] == $value) { // intentionally ==
+			if (isset($params[$key]) && (string) $params[$key] === (string) $value) {
 				unset($params[$key]);
 			}
 		}
@@ -55,7 +55,7 @@ class SimpleRouter implements Router
 		$url = $refUrl->getHostUrl() . $refUrl->getPath();
 		$sep = ini_get('arg_separator.input');
 		$query = http_build_query($params, '', $sep ? $sep[0] : '&');
-		if ($query != '') { // intentionally ==
+		if ($query !== '') {
 			$url .= '?' . $query;
 		}
 		return $url;
