@@ -47,7 +47,7 @@ class SimpleRouter implements Router
 	{
 		// remove default values; null values are retain
 		foreach ($this->defaults as $key => $value) {
-			if (isset($params[$key]) && (string) $params[$key] === (string) $value) {
+			if (isset($params[$key]) && $params[$key] == $value) { // default value may be object, intentionally ==
 				unset($params[$key]);
 			}
 		}
