@@ -8,13 +8,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - uses: shivammathur/setup-php@v1
+            - uses: shivammathur/setup-php@v2
               with:
                   php-version: 7.1
                   coverage: none
 
             - run: composer create-project nette/code-checker temp/code-checker ^3 --no-progress
-            - run: php temp/code-checker/code-checker --strict-types
+            - run: php temp/code-checker/code-checker --strict-types --no-progress
 
 
     nette_cs:
@@ -22,10 +22,10 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - uses: shivammathur/setup-php@v1
+            - uses: shivammathur/setup-php@v2
               with:
                   php-version: 7.4
                   coverage: none
 
-            - run: composer create-project nette/coding-standard temp/coding-standard ^3 --no-progress
+            - run: composer create-project nette/coding-standard temp/coding-standard ^3 --no-progress --ignore-platform-reqs
             - run: php temp/coding-standard/ecs check
