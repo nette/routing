@@ -2,7 +2,7 @@ Nette Routing: two-ways URL conversion
 **************************************
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/routing.svg)](https://packagist.org/packages/nette/routing)
-[![Build Status](https://travis-ci.org/nette/routing.svg?branch=master)](https://travis-ci.org/nette/routing)
+[![Tests](https://github.com/nette/routing/workflows/Tests/badge.svg?branch=master)](https://github.com/nette/routing/actions)
 [![Coverage Status](https://coveralls.io/repos/github/nette/routing/badge.svg?branch=master)](https://coveralls.io/github/nette/routing?branch=master)
 
 Introduction
