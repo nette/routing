@@ -263,6 +263,15 @@ class RouteList implements Router
 	}
 
 
+	/**
+	 * @return int[]
+	 */
+	public function getFlags(): array
+	{
+		return array_column($this->list, 1);
+	}
+
+
 	private function expandDomain(string $host): string
 	{
 		$parts = ip2long($host) ? [$host] : array_reverse(explode('.', $host));
