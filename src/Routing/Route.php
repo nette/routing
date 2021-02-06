@@ -43,10 +43,10 @@ class Route implements Router
 		PATH = 2,
 		RELATIVE = 3;
 
-	/** fixity types - how to handle default value? {@link Route::$metadata} */
+	/** fixity types - has default value and is: */
 	private const
-		OPTIONAL = 0,
-		PATH_OPTIONAL = 1,
+		IN_QUERY = 0,
+		IN_PATH = 1, // in brackets is default value = null
 		CONSTANT = 2;
 
 	/** @var array */
@@ -147,7 +147,7 @@ class Route implements Router
 
 		// 2) CONSTANT FIXITY
 		foreach ($this->metadata as $name => $meta) {
-			if (!isset($params[$name]) && isset($meta[self::FIXITY]) && $meta[self::FIXITY] !== self::OPTIONAL) {
+			if (!isset($params[$name]) && isset($meta[self::FIXITY]) && $meta[self::FIXITY] !== self::IN_QUERY) {
 				$params[$name] = null; // cannot be overwriten in 3) and detected by isset() in 4)
 			}
 		}
@@ -391,7 +391,7 @@ class Route implements Router
 				$meta = ($metadata[$name] ?? []) + ($this->defaultMeta['?' . $name] ?? []);
 
 				if (array_key_exists(self::VALUE, $meta)) {
-					$meta[self::FIXITY] = self::OPTIONAL;
+					$meta[self::FIXITY] = self::IN_QUERY;
 				}
 
 				unset($meta[self::PATTERN]);
@@ -460,7 +460,7 @@ class Route implements Router
 
 			if ($default !== '') {
 				$meta[self::VALUE] = substr($default, 1);
-				$meta[self::FIXITY] = self::PATH_OPTIONAL;
+				$meta[self::FIXITY] = self::IN_PATH;
 			}
 
 			$meta[self::FILTER_TABLE_OUT] = empty($meta[self::FILTER_TABLE])
@@ -486,13 +486,13 @@ class Route implements Router
 				if (!isset($meta[self::VALUE])) {
 					$meta[self::VALUE] = $meta[self::DEFAULT] = null;
 				}
-				$meta[self::FIXITY] = self::PATH_OPTIONAL;
+				$meta[self::FIXITY] = self::IN_PATH;
 
 			} elseif (isset($meta[self::FIXITY])) {
 				if ($autoOptional) {
 					$re = '(?:' . $re . ')?';
 				}
-				$meta[self::FIXITY] = self::PATH_OPTIONAL;
+				$meta[self::FIXITY] = self::IN_PATH;
 
 			} else {
 				$autoOptional = false;
