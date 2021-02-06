@@ -319,7 +319,8 @@ class Route implements Router
 			}
 
 			if ($fixity !== null) {
-				if ($params[$name] === $meta[self::Value]) { // remove default values; null values are retain
+				if ($params[$name] == $meta[self::Value]) { // default value may be object, intentionally ==
+					// remove default values; null values are retain
 					unset($params[$name]);
 					continue;
 
