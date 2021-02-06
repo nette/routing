@@ -8,7 +8,7 @@
 namespace Nette\Routing;
 
 use Nette;
-use function http_build_query, ini_get, is_scalar;
+use function http_build_query, ini_get;
 
 
 /**
@@ -37,9 +37,7 @@ class SimpleRouter implements Router
 	{
 		// remove default values; null values are retain
 		foreach ($this->defaults as $key => $value) {
-			if (isset($params[$key])
-				&& (is_scalar($params[$key]) ? (string) $params[$key] : $params[$key]) === (is_scalar($value) ? (string) $value : $value)
-			) {
+			if (isset($params[$key]) && $params[$key] == $value) { // default value may be object, intentionally ==
 				unset($params[$key]);
 			}
 		}
