@@ -245,5 +245,8 @@ test('parameter with null default - null omitted, empty string fails', function 
 		testRouteOut($route, ['presenter' => 'homepage', 'param' => null]),
 	);
 
-	Assert::null(testRouteOut($route, ['presenter' => 'homepage', 'param' => '']));
+	Assert::same(
+		'http://example.com/homepage/',
+		testRouteOut($route, ['presenter' => 'homepage', 'param' => '']),
+	);
 });
