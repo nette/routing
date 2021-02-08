@@ -176,8 +176,9 @@ class Route implements Router
 			$path = $url->getPath();
 		}
 
-		if ($path !== '') {
-			$path = rtrim(rawurldecode($path), '/') . '/';
+		$path = rawurldecode($path);
+		if ($path !== '' && $path[-1] !== '/') {
+			$path .= '/';
 		}
 
 		if (!$matches = Strings::match($path, $re)) {
