@@ -34,8 +34,8 @@ function testRouteIn(Nette\Routing\Router $route, string $relativeUrl, array $ex
 
 	$params = $route->match($httpRequest);
 
-	if ($params === null) { // not matched
-		Assert::null($expectedParams);
+	if ($params === null || $expectedParams === null) { // not matched
+		Assert::same($expectedParams, $params);
 
 	} else { // matched
 		asort($params);
