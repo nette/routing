@@ -15,6 +15,9 @@ require __DIR__ . '/../bootstrap.php';
 
 $route = new Route('<param>');
 
+testRouteIn($route, '/a/', ['param' => 'a', 'test' => 'testvalue'], '/a?test=testvalue');
+testRouteIn($route, '/a//');
+
 testRouteIn($route, '/a/b');
 Assert::null(testRouteOut($route, ['param' => 'a/b']));
 
