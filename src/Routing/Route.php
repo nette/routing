@@ -300,6 +300,12 @@ class Route implements Router
 			$fixity = $meta[self::FIXITY] ?? null;
 
 			if (!isset($params[$name])) {
+				if ($fixity === self::CONSTANT) {
+					if ($meta[self::VALUE] === null) {
+						continue;
+					}
+					return false; // wrong parameter value
+				}
 				continue; // retains null values
 			}
 
