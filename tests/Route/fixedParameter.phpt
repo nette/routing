@@ -27,7 +27,7 @@ Assert::null(testRouteOut($route, ['const' => 'foo']));
 
 Assert::same(
 	'http://example.com/',
-	testRouteOut($route, ['const' => 'hello'])
+	testRouteOut($route, ['const' => 'hello']),
 );
 
 Assert::null(testRouteOut($route, ['const' => null]));
