@@ -165,9 +165,8 @@ class RouteList implements Router
 
 	/**
 	 * Adds a router.
-	 * @return static
 	 */
-	public function add(Router $router, int $flags = 0)
+	public function add(Router $router, int $flags = 0): static
 	{
 		$this->list[] = [$router, $flags];
 		$this->ranks = null;
@@ -202,9 +201,8 @@ class RouteList implements Router
 	/**
 	 * @param  string  $mask  e.g. '<presenter>/<action>/<id \d{1,3}>'
 	 * @param  array  $metadata  default values or metadata
-	 * @return static
 	 */
-	public function addRoute(string $mask, $metadata = [], int $flags = 0)
+	public function addRoute(string $mask, array $metadata = [], int $flags = 0): static
 	{
 		$this->add(new Route($mask, $metadata), $flags);
 		return $this;
@@ -213,9 +211,8 @@ class RouteList implements Router
 
 	/**
 	 * Returns an iterator over all routers.
-	 * @return static
 	 */
-	public function withDomain(string $domain)
+	public function withDomain(string $domain): static
 	{
 		$router = new static;
 		$router->domain = $domain;
@@ -226,10 +223,7 @@ class RouteList implements Router
 	}
 
 
-	/**
-	 * @return static
-	 */
-	public function withPath(string $path)
+	public function withPath(string $path): static
 	{
 		$router = new static;
 		$router->path = rtrim($path, '/') . '/';
@@ -240,10 +234,7 @@ class RouteList implements Router
 	}
 
 
-	/**
-	 * @return static
-	 */
-	public function end()
+	public function end(): static
 	{
 		return $this->parent;
 	}
