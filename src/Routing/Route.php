@@ -49,37 +49,33 @@ class Route implements Router
 		IN_PATH = 1, // in brackets is default value = null
 		CONSTANT = 2;
 
-	/** @var array */
-	protected $defaultMeta = [
+	protected array $defaultMeta = [
 		'#' => [ // default style for path parameters
 			self::PATTERN => '[^/]+',
 			self::FILTER_OUT => [self::class, 'param2path'],
 		],
 	];
 
-	/** @var string */
-	private $mask;
+	private string $mask;
 
-	/** @var array */
-	private $sequence;
+	private array $sequence;
 
-	/** @var string  regular expression pattern */
-	private $re;
+	/** regular expression pattern */
+	private string $re;
 
 	/** @var string[]  parameter aliases in regular expression */
-	private $aliases = [];
+	private array $aliases = [];
 
 	/** @var array of [value & fixity, filterIn, filterOut] */
-	private $metadata = [];
+	private array $metadata = [];
 
-	/** @var array  */
-	private $xlat = [];
+	private array $xlat = [];
 
-	/** @var int HOST, PATH, RELATIVE */
-	private $type;
+	/** HOST, PATH, RELATIVE */
+	private int $type;
 
-	/** @var string  http | https */
-	private $scheme;
+	/** http | https */
+	private string $scheme = '';
 
 
 	/**

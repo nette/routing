@@ -19,8 +19,7 @@ class SimpleRouter implements Router
 {
 	use Nette\SmartObject;
 
-	/** @var array */
-	private $defaults;
+	private array $defaults;
 
 
 	public function __construct(array $defaults = [])
