@@ -316,10 +316,8 @@ class Route implements Router
 			}
 
 			if ($fixity !== null) {
-				if (PHP_VERSION_ID < 80000
-					? $params[$name] === $meta[self::VALUE]
-					: $params[$name] == $meta[self::VALUE] // default value may be object, intentionally ==
-				) { // remove default values; null values are retain
+				if ($params[$name] == $meta[self::VALUE]) { // default value may be object, intentionally ==
+					// remove default values; null values are retain
 					unset($params[$name]);
 					continue;
 
