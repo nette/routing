@@ -29,6 +29,6 @@ Assert::with($list, function () use ($r1, $r2, $r3) {
 			'bar' => [$r1, $r3],
 			'foo' => [$r2, $r3],
 		],
-		$this->ranks
+		$this->ranks,
 	);
 });

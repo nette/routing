@@ -16,7 +16,7 @@ $list->add($r2 = new Route('<foo>', ['route' => 'foo']));
 
 Assert::same(
 	[$r1, $r2],
-	$list->getRouters()
+	$list->getRouters(),
 );
 
 
@@ -24,5 +24,5 @@ $list->prepend($r3 = new Route('<foo>', ['route' => 'foo']));
 
 Assert::same(
 	[$r3, $r1, $r2],
-	$list->getRouters()
+	$list->getRouters(),
 );

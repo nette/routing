@@ -22,11 +22,11 @@ test('', function () {
 
 	Assert::same(
 		'http://example.com/',
-		testRouteOut($route, ['param' => $object])
+		testRouteOut($route, ['param' => $object]),
 	);
 
 	Assert::same(
 		PHP_VERSION_ID < 80000 ? null : 'http://example.com/',
-		testRouteOut($route, ['param' => new stdClass])
+		testRouteOut($route, ['param' => new stdClass]),
 	);
 });
