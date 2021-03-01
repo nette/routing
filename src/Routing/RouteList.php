@@ -19,26 +19,21 @@ class RouteList implements Router
 {
 	use Nette\SmartObject;
 
-	/** @var self|null */
-	protected $parent;
+	protected ?self $parent;
 
 	/** @var array of [Router, flags] */
-	private $list = [];
+	private array $list = [];
 
 	/** @var Router[][]|null */
 	private $ranks;
 
-	/** @var string */
-	private $cacheKey;
+	private ?string $cacheKey;
 
-	/** @var string|null */
-	private $domain;
+	private ?string $domain = null;
 
-	/** @var string|null */
-	private $path;
+	private ?string $path = null;
 
-	/** @var \SplObjectStorage|null */
-	private $refUrlCache;
+	private ?\SplObjectStorage $refUrlCache;
 
 
 	public function __construct()
