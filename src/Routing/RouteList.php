@@ -280,6 +280,18 @@ class RouteList implements Router
 	}
 
 
+	public function getDomain(): ?string
+	{
+		return $this->domain;
+	}
+
+
+	public function getPath(): ?string
+	{
+		return $this->path;
+	}
+
+
 	private function expandDomain(string $host): string
 	{
 		$parts = ip2long($host) ? [$host] : array_reverse(explode('.', $host));
