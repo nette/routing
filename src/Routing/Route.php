@@ -401,7 +401,7 @@ class Route implements Router
 			[, $this->scheme, $path] = $m;
 			return $path;
 
-		} elseif (substr($this->mask, 0, 1) === '/') {
+		} elseif (str_starts_with($this->mask, '/')) {
 			$this->type = self::PATH;
 
 		} else {
@@ -552,7 +552,7 @@ class Route implements Router
 	private function parseQuery(array $parts): bool
 	{
 		$query = $parts[count($parts) - 2] ?? '';
-		if (substr(ltrim($query), 0, 1) !== '?') {
+		if (!str_starts_with(ltrim($query), '?')) {
 			return false;
 		}
 
