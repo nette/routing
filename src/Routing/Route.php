@@ -255,7 +255,7 @@ class Route implements Router
 			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $url;
 
 		} else {
-			$host = $refUrl->getHost();
+			$host = $refUrl->getAuthority();
 			$parts = ip2long($host)
 				? [$host]
 				: array_reverse(explode('.', $host));
