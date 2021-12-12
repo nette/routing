@@ -19,6 +19,7 @@ $route = new Route('<presenter>', [
 			if (substr($arr['presenter'], 0, 3) !== 'abc') {
 				return null;
 			}
+
 			$arr['presenter'] .= '.in';
 			$arr['param'] .= '.in';
 			return $arr;
@@ -27,6 +28,7 @@ $route = new Route('<presenter>', [
 			if (substr($arr['presenter'], 0, 3) !== 'abc') {
 				return null;
 			}
+
 			$arr['presenter'] .= '.out';
 			$arr['param'] .= '.out';
 			return $arr;
@@ -51,6 +53,7 @@ $route = new Route('<lang>/<presenter>/<action>', [
 			if ($arr['presenter'] !== 'abc-cs') {
 				return null;
 			}
+
 			$arr['presenter'] = substr($arr['presenter'], 0, -3);
 			$arr['action'] = substr($arr['action'], 0, -3);
 			return $arr;
@@ -59,6 +62,7 @@ $route = new Route('<lang>/<presenter>/<action>', [
 			if ($arr['presenter'] !== 'abc') {
 				return null;
 			}
+
 			$arr['presenter'] .= '-' . $arr['lang'];
 			$arr['action'] .= '-' . $arr['lang'];
 			return $arr;

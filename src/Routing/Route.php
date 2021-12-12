@@ -121,6 +121,7 @@ class Route implements Router
 			if (strncmp($url->getPath(), $basePath, strlen($basePath)) !== 0) {
 				return null;
 			}
+
 			$path = substr($url->getPath(), strlen($basePath));
 
 		} else {
@@ -144,7 +145,6 @@ class Route implements Router
 			}
 		}
 
-
 		// 2) CONSTANT FIXITY
 		foreach ($this->metadata as $name => $meta) {
 			if (!isset($params[$name]) && isset($meta[self::FIXITY]) && $meta[self::FIXITY] !== self::IN_QUERY) {
@@ -152,14 +152,12 @@ class Route implements Router
 			}
 		}
 
-
 		// 3) QUERY
 		if ($this->xlat) {
 			$params += self::renameKeys($httpRequest->getQuery(), array_flip($this->xlat));
 		} else {
 			$params += $httpRequest->getQuery();
 		}
-
 
 		// 4) APPLY FILTERS & FIXITY
 		foreach ($this->metadata as $name => $meta) {
@@ -178,7 +176,6 @@ class Route implements Router
 						return null; // rejected by filter
 					}
 				}
-
 			} elseif (isset($meta[self::FIXITY])) {
 				$params[$name] = $meta[self::VALUE];
 			}
@@ -259,6 +256,7 @@ class Route implements Router
 			if ($i === 0) {
 				break;
 			}
+
 			$i--;
 
 			$name = $sequence[$i--]; // parameter name
@@ -275,7 +273,6 @@ class Route implements Router
 				} else {
 					$required = count($brackets);
 				}
-
 			} elseif ($name[0] === '?') { // "foo" parameter
 				continue;
 
@@ -364,6 +361,7 @@ class Route implements Router
 						? '0'
 						: (string) $meta[self::VALUE];
 				}
+
 				$metadata[$name]['fixity'] = self::CONSTANT;
 			}
 		}
@@ -404,6 +402,7 @@ class Route implements Router
 					$this->xlat[$name] = $param;
 				}
 			}
+
 			$i -= 5;
 		}
 
@@ -418,11 +417,13 @@ class Route implements Router
 			if (strpbrk($part, '<>') !== false) {
 				throw new Nette\InvalidArgumentException("Unexpected '$part' in mask '$mask'.");
 			}
+
 			array_unshift($sequence, $part);
 			$re = preg_quote($part, '#') . $re;
 			if ($i === 0) {
 				break;
 			}
+
 			$i--;
 
 			$part = $parts[$i]; // [ or ]
@@ -431,6 +432,7 @@ class Route implements Router
 				if ($brackets < 0) {
 					throw new Nette\InvalidArgumentException("Unexpected '$part' in mask '$mask'.");
 				}
+
 				array_unshift($sequence, $part);
 				$re = ($part[0] === '[' ? '(?:' : ')?') . $re;
 				$i -= 4;
@@ -477,6 +479,7 @@ class Route implements Router
 					$meta[self::DEFAULT] = $meta[self::VALUE];
 				}
 			}
+
 			$meta[self::PATTERN] = $pattern;
 
 			// include in expression
@@ -486,12 +489,14 @@ class Route implements Router
 				if (!isset($meta[self::VALUE])) {
 					$meta[self::VALUE] = $meta[self::DEFAULT] = null;
 				}
+
 				$meta[self::FIXITY] = self::IN_PATH;
 
 			} elseif (isset($meta[self::FIXITY])) {
 				if ($autoOptional) {
 					$re = '(?:' . $re . ')?';
 				}
+
 				$meta[self::FIXITY] = self::IN_PATH;
 
 			} else {
@@ -532,6 +537,7 @@ class Route implements Router
 				$defaults[$name] = $meta[self::VALUE];
 			}
 		}
+
 		return $defaults;
 	}
 
@@ -552,6 +558,7 @@ class Route implements Router
 				$res[$name] = $meta[self::VALUE];
 			}
 		}
+
 		return $res;
 	}
 
@@ -578,6 +585,7 @@ class Route implements Router
 				$res[$k] = $v;
 			}
 		}
+
 		return $res;
 	}
 

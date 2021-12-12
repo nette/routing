@@ -23,7 +23,7 @@ function test(string $title, Closure $function): void
 }
 
 
-function testRouteIn(Nette\Routing\Router $route, string $relativeUrl, array $expectedParams = null, string $expectedUrl = null): void
+function testRouteIn(Nette\Routing\Router $route, string $relativeUrl, ?array $expectedParams = null, ?string $expectedUrl = null): void
 {
 	$url = new Nette\Http\UrlScript("http://example.com$relativeUrl", '/');
 	$url = $url->withQuery([

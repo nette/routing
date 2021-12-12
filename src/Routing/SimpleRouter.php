@@ -60,6 +60,7 @@ class SimpleRouter implements Router
 		if ($query !== '') {
 			$url .= '?' . $query;
 		}
+
 		return $url;
 	}
 
