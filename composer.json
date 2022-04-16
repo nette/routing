@@ -22,7 +22,7 @@
 	"require-dev": {
 		"nette/tester": "^2.0",
 		"tracy/tracy": "^2.3",
-		"phpstan/phpstan": "^0.12"
+		"phpstan/phpstan": "^1"
 	},
 	"autoload": {
 		"classmap": ["src/"]
