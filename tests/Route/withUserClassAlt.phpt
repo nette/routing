@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $route = new Route('<presenter>/<id>', [
 	'id' => [
-		Route::PATTERN => '\d{1,3}',
+		Route::Pattern => '\d{1,3}',
 	],
 ]);
 

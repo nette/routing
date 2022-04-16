@@ -14,13 +14,13 @@ require __DIR__ . '/../bootstrap.php';
 
 $route = new Route('<presenter>', [
 	'presenter' => [
-		Route::FILTER_TABLE => [
+		Route::FilterTable => [
 			'produkt' => 'product',
 			'kategorie' => 'category',
 			'zakaznik' => 'customer',
 			'kosik' => 'basket',
 		],
-		Route::FILTER_STRICT => true,
+		Route::FilterStrict => true,
 	],
 ]);
 

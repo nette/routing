@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $route = new Route('<presenter>', [
 	null => [
-		Route::FILTER_IN => function (array $arr) {
+		Route::FilterIn => function (array $arr) {
 			if (substr($arr['presenter'], 0, 3) !== 'abc') {
 				return null;
 			}
@@ -24,7 +24,7 @@ $route = new Route('<presenter>', [
 			$arr['param'] .= '.in';
 			return $arr;
 		},
-		Route::FILTER_OUT => function (array $arr) {
+		Route::FilterOut => function (array $arr) {
 			if (substr($arr['presenter'], 0, 3) !== 'abc') {
 				return null;
 			}
@@ -49,7 +49,7 @@ Assert::null(testRouteOut($route, ['presenter' => 'cde']));
 
 $route = new Route('<lang>/<presenter>/<action>', [
 	null => [
-		Route::FILTER_IN => function (array $arr) {
+		Route::FilterIn => function (array $arr) {
 			if ($arr['presenter'] !== 'abc-cs') {
 				return null;
 			}
@@ -58,7 +58,7 @@ $route = new Route('<lang>/<presenter>/<action>', [
 			$arr['action'] = substr($arr['action'], 0, -3);
 			return $arr;
 		},
-		Route::FILTER_OUT => function (array $arr) {
+		Route::FilterOut => function (array $arr) {
 			if ($arr['presenter'] !== 'abc') {
 				return null;
 			}

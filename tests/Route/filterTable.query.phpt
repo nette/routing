@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $route = new Route(' ? action=<presenter>', [
 	'presenter' => [
-		Route::FILTER_TABLE => [
+		Route::FilterTable => [
 			'produkt' => 'product',
 			'kategorie' => 'category',
 			'zakaznik' => 'customer',
