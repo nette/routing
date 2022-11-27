@@ -272,12 +272,13 @@ class Route implements Router
 			$parts = ip2long($host)
 				? [$host]
 				: array_reverse(explode('.', $host));
+			$port = $refUrl->getDefaultPort() === ($tmp = $refUrl->getPort()) ? '' : ':' . $tmp;
 			$url = strtr($url, [
 				'/%basePath%/' => $refUrl->getBasePath(),
-				'%tld%' => $parts[0],
-				'%domain%' => isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0],
+				'%tld%' => $parts[0] . $port,
+				'%domain%' => (isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0]) . $port,
 				'%sld%' => $parts[1] ?? '',
-				'%host%' => $host,
+				'%host%' => $host . $port,
 			]);
 		}
 
