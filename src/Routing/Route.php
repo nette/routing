@@ -29,14 +29,23 @@ class Route implements Router
 		FilterTable = 'filterTable',
 		FilterStrict = 'filterStrict';
 
-	/** key used in metadata */
-	public const
-		VALUE = self::Value,
-		PATTERN = self::Pattern,
-		FILTER_IN = self::FilterIn,
-		FILTER_OUT = self::FilterOut,
-		FILTER_TABLE = self::FilterTable,
-		FILTER_STRICT = self::FilterStrict;
+	/** @deprecated use Route::Value */
+	public const VALUE = self::Value;
+
+	/** @deprecated use Route::Pattern */
+	public const PATTERN = self::Pattern;
+
+	/** @deprecated use Route::FilterIn */
+	public const FILTER_IN = self::FilterIn;
+
+	/** @deprecated use Route::FilterOut */
+	public const FILTER_OUT = self::FilterOut;
+
+	/** @deprecated use Route::FilterTable */
+	public const FILTER_TABLE = self::FilterTable;
+
+	/** @deprecated use Route::FilterStrict */
+	public const FILTER_STRICT = self::FilterStrict;
 
 	/** key used in metadata */
 	private const
