@@ -18,7 +18,7 @@ class RouteList implements Router
 {
 	protected ?self $parent;
 
-	/** @var list<array{Router, int}> */
+	/** @var list<array{Router, bool}> */
 	private array $list = [];
 
 	/** @var array<string, list<Router>>|null */
@@ -216,7 +216,7 @@ class RouteList implements Router
 	/**
 	 * Adds a router.
 	 */
-	public function add(Router $router, int $oneWay = 0): static
+	public function add(Router $router, bool $oneWay = false): static
 	{
 		$this->applyStrictDefaults($router);
 		$this->list[] = [$router, $oneWay];
@@ -228,7 +228,7 @@ class RouteList implements Router
 	/**
 	 * Prepends a router.
 	 */
-	public function prepend(Router $router, int $oneWay = 0): void
+	public function prepend(Router $router, bool $oneWay = false): void
 	{
 		$this->applyStrictDefaults($router);
 		array_splice($this->list, 0, 0, [[$router, $oneWay]]);
@@ -250,7 +250,7 @@ class RouteList implements Router
 		if (!isset($this->list[$index])) {
 			throw new Nette\OutOfRangeException('Offset invalid or out of range');
 		} elseif ($router) {
-			$this->list[$index] = [$router, 0];
+			$this->list[$index] = [$router, false];
 		} else {
 			array_splice($this->list, $index, 1);
 		}
@@ -264,7 +264,7 @@ class RouteList implements Router
 	 * @param string  $mask e.g. '<presenter>/<action>/<id \d{1,3}>'
 	 * @param array<string, mixed>  $metadata default values or metadata
 	 */
-	public function addRoute(string $mask, array $metadata = [], int $oneWay = 0): static
+	public function addRoute(string $mask, array $metadata = [], bool $oneWay = false): static
 	{
 		$this->add(new Route($mask, $metadata), $oneWay);
 		return $this;
@@ -319,12 +319,12 @@ class RouteList implements Router
 
 
 	/**
-	 * Returns the flags (e.g. ONE_WAY) for each router in this list.
-	 * @return list<int>
+	 * Returns the flags (e.g. oneWay) for each router in this list.
+	 * @return list<array{oneWay: bool}>
 	 */
 	public function getFlags(): array
 	{
-		return array_column($this->list, 1);
+		return array_map(fn($info) => ['oneWay' => (bool) $info[1]], $this->list);
 	}
 
 
