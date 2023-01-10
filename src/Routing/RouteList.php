@@ -188,7 +188,7 @@ class RouteList implements Router
 	/**
 	 * Adds a router.
 	 */
-	public function add(Router $router, int $oneWay = 0): static
+	public function add(Router $router, bool $oneWay = false): static
 	{
 		$this->list[] = [$router, $oneWay];
 		$this->ranks = null;
@@ -199,7 +199,7 @@ class RouteList implements Router
 	/**
 	 * Prepends a router.
 	 */
-	public function prepend(Router $router, int $oneWay = 0): void
+	public function prepend(Router $router, bool $oneWay = false): void
 	{
 		array_splice($this->list, 0, 0, [[$router, $oneWay]]);
 		$this->ranks = null;
@@ -221,7 +221,7 @@ class RouteList implements Router
 	}
 
 
-	public function addRoute(string $mask, array $metadata = [], int $oneWay = 0): static
+	public function addRoute(string $mask, array $metadata = [], bool $oneWay = false): static
 	{
 		$this->add(new Route($mask, $metadata), $oneWay);
 		return $this;
@@ -269,11 +269,11 @@ class RouteList implements Router
 
 
 	/**
-	 * @return int[]
+	 * @return bool[][]
 	 */
 	public function getFlags(): array
 	{
-		return array_column($this->list, 1);
+		return array_map(fn($info) => ['oneWay' => (bool) $info[1]], $this->list);
 	}
 
 

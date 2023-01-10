@@ -14,7 +14,7 @@ $list = new RouteList;
 $list->add(new Route('bar', ['presenter' => 'bar']));
 $list->add(new Route('<foo>', ['presenter' => 'foo']));
 $list->add(new Route('<presenter>/<action>', ['presenter' => 'xxx']));
-$list->add(new Route('oneway'), $list::ONE_WAY);
+$list->add(new Route('oneway'), oneWay: true);
 
 [$r1, $r2, $r3, $r4] = $list->getRouters();
 
