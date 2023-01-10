@@ -254,7 +254,7 @@ class RouteList implements Router
 
 
 	/**
-	 * @return static
+	 * @return ?static
 	 */
 	public function end()
 	{
