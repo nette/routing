@@ -15,8 +15,8 @@ use Nette;
  */
 interface Router
 {
-	/** @deprecated for backward compatibility */
-	public const ONE_WAY = 0b0001;
+	/** @deprecated */
+	public const ONE_WAY = true;
 
 	/**
 	 * Matches an HTTP request and returns its parameters, or null if the route does not match.
