@@ -11,11 +11,11 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $list = new RouteList;
-$list->add(new Route('foo', ['route' => 'foo']), RouteList::ONE_WAY);
-$list->addRoute('bar', ['route' => 'bar'], RouteList::ONE_WAY);
+$list->add(new Route('foo', ['route' => 'foo']), oneWay: true);
+$list->addRoute('bar', ['route' => 'bar'], oneWay: true);
 $list->add(new Route('hello', ['route' => 'hello']));
 
-Assert::same([RouteList::ONE_WAY, RouteList::ONE_WAY, 0], $list->getFlags());
+Assert::same([['oneWay' => true], ['oneWay' => true], ['oneWay' => false]], $list->getFlags());
 
 testRouteIn($list, '/foo', ['route' => 'foo', 'test' => 'testvalue']);
 testRouteIn($list, '/bar', ['route' => 'bar', 'test' => 'testvalue']);
