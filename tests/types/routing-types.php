@@ -32,7 +32,7 @@ function testRouteListGetRouters(RouteList $list): void
 
 function testRouteListGetFlags(RouteList $list): void
 {
-	assertType('list<int>', $list->getFlags());
+	assertType('list<array{oneWay: bool}>', $list->getFlags());
 }
 
 
