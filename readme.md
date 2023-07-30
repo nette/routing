@@ -14,7 +14,7 @@ The router is responsible for everything about URLs so that you no longer have t
 - a few notes about SEO redirection
 - and we'll show you how to write your own router
 
-It requires PHP version 7.1 and supports PHP up to 8.2.
+It requires PHP version 7.1 and supports PHP up to 8.3.
 
 Documentation can be found on the [website](https://doc.nette.org/routing).
 
