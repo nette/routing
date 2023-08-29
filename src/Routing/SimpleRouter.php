@@ -17,8 +17,6 @@ use Nette;
  */
 class SimpleRouter implements Router
 {
-	use Nette\SmartObject;
-
 	private array $defaults;
 
 

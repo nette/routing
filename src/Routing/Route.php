@@ -20,8 +20,6 @@ use function array_key_exists, is_array, count, strlen;
  */
 class Route implements Router
 {
-	use Nette\SmartObject;
-
 	/** key used in metadata */
 	public const
 		Value = 'value',

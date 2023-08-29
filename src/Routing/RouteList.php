@@ -17,8 +17,6 @@ use Nette;
  */
 class RouteList implements Router
 {
-	use Nette\SmartObject;
-
 	protected ?self $parent;
 
 	/** @var array of [Router, flags] */
