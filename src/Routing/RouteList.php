@@ -48,8 +48,25 @@ class RouteList implements Router
 
 	/**
 	 * Maps HTTP request to an array.
+	 * @final
 	 */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
+	{
+		if ($httpRequest = $this->prepareRequest($httpRequest)) {
+			foreach ($this->list as [$router]) {
+				if (
+					($params = $router->match($httpRequest)) !== null
+					&& ($params = $this->completeParameters($params)) !== null
+				) {
+					return $params;
+				}
+			}
+		}
+		return null;
+	}
+
+
+	protected function prepareRequest(Nette\Http\IRequest $httpRequest): ?Nette\Http\IRequest
 	{
 		if ($this->domain) {
 			$host = $httpRequest->getUrl()->getHost();
@@ -68,14 +85,13 @@ class RouteList implements Router
 			$httpRequest = $httpRequest->withUrl($url);
 		}
 
-		foreach ($this->list as [$router]) {
-			$params = $router->match($httpRequest);
-			if ($params !== null) {
-				return $params;
-			}
-		}
+		return $httpRequest;
+	}
 
-		return null;
+
+	protected function completeParameters(array $params): ?array
+	{
+		return $params;
 	}
 
 
