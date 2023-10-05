@@ -38,9 +38,8 @@ class RouteList implements Router
 
 	/**
 	 * Maps HTTP request to an array.
-	 * @final
 	 */
-	public function match(Nette\Http\IRequest $httpRequest): ?array
+	final public function match(Nette\Http\IRequest $httpRequest): ?array
 	{
 		if ($httpRequest = $this->prepareRequest($httpRequest)) {
 			foreach ($this->list as [$router]) {
