@@ -36,3 +36,21 @@ testRouteIn($list, '/sup/sub/bar', ['route' => 'bar', 'test' => 'testvalue'], '/
 testRouteIn($list, '/slash/hello'); // /slash is not allowed
 
 testRouteIn($list, '/slash2/hello2', ['route' => 'hello2', 'test' => 'testvalue'], '/slash2/hello2?test=testvalue');
+
+
+
+// trailing slash is optional
+$list = new RouteList;
+$list
+	->withPath('foo')
+		->addRoute('', ['route' => 'foo'])
+		->withPath('bar')
+			->addRoute('', ['route' => 'bar']);
+
+testRouteIn($list, '/foo', ['route' => 'foo', 'test' => 'testvalue'], '/foo/?test=testvalue');
+testRouteIn($list, '/foo/', ['route' => 'foo', 'test' => 'testvalue'], '/foo/?test=testvalue');
+
+testRouteIn($list, '/foo/bar', ['route' => 'bar', 'test' => 'testvalue'], '/foo/bar/?test=testvalue');
+testRouteIn($list, '/foo/bar/', ['route' => 'bar', 'test' => 'testvalue'], '/foo/bar/?test=testvalue');
+
+testRouteIn($list, '/foobar');

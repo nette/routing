@@ -77,11 +77,15 @@ class RouteList implements Router
 
 		if ($this->path) {
 			$url = $httpRequest->getUrl();
-			if (strncmp($url->getRelativePath(), $this->path, strlen($this->path))) {
+			$relativePath = $url->getRelativePath();
+			if (strncmp($relativePath, $this->path, strlen($this->path)) === 0) {
+				$url = $url->withPath($url->getPath(), $url->getBasePath() . $this->path);
+			} elseif ($relativePath . '/' === $this->path) {
+				$url = $url->withPath($url->getPath() . '/');
+			} else {
 				return null;
 			}
 
-			$url = $url->withPath($url->getPath(), $url->getBasePath() . $this->path);
 			$httpRequest = $httpRequest->withUrl($url);
 		}
 
