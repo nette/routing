@@ -22,12 +22,8 @@ $identityMap[2] = new RouterObject(2);
 $route = new Route('<parameter>', [
 	'presenter' => 'presenter',
 	'parameter' => [
-		Route::FilterIn => function ($s) use ($identityMap) {
-			return $identityMap[$s] ?? null;
-		},
-		Route::FilterOut => function ($obj) {
-			return $obj instanceof RouterObject ? $obj->getId() : null;
-		},
+		Route::FilterIn => fn($s) => $identityMap[$s] ?? null,
+		Route::FilterOut => fn($obj) => $obj instanceof RouterObject ? $obj->getId() : null,
 	],
 ]);
 

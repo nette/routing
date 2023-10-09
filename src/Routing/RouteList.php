@@ -107,7 +107,7 @@ class RouteList implements Router
 		if ($this->domain) {
 			if (!isset($this->refUrlCache[$refUrl])) {
 				$this->refUrlCache[$refUrl] = $refUrl->withHost(
-					$this->expandDomain($refUrl->getHost())
+					$this->expandDomain($refUrl->getHost()),
 				);
 			}
 

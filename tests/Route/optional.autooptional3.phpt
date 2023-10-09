@@ -35,10 +35,10 @@ Assert::null(testRouteOut($route, ['presenter' => 'homepage', 'default' => 'abc'
 
 Assert::same(
 	'http://example.com/homepage/123/xyz',
-	testRouteOut($route, ['presenter' => 'homepage', 'required' => 'xyz'])
+	testRouteOut($route, ['presenter' => 'homepage', 'required' => 'xyz']),
 );
 
 Assert::same(
 	'http://example.com/homepage/abc/xyz',
-	testRouteOut($route, ['presenter' => 'homepage', 'required' => 'xyz', 'default' => 'abc'])
+	testRouteOut($route, ['presenter' => 'homepage', 'required' => 'xyz', 'default' => 'abc']),
 );
