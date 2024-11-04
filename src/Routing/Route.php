@@ -628,6 +628,11 @@ class Route implements Router
 	 */
 	public static function param2path(string $s): string
 	{
-		return str_replace('%2F', '/', rawurlencode($s));
+		// segment + "/", see https://datatracker.ietf.org/doc/html/rfc3986#appendix-A
+		return preg_replace_callback(
+			'#[^\w.~!$&\'()*+,;=:@"/-]#',
+			fn($m) => rawurlencode($m[0]),
+			$s,
+		);
 	}
 }
