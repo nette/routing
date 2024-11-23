@@ -17,7 +17,7 @@ use Nette;
  */
 interface Router
 {
-	/** @deprecated */
+	#[\Deprecated]
 	public const ONE_WAY = true;
 
 	/**
