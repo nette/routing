@@ -163,7 +163,7 @@ class Route implements Router
 		if ($this->type === self::Host) {
 			$host = $url->getHost();
 			$path = '//' . $host . $url->getPath();
-            $parts = filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+            $parts = filter_var($host, FILTER_VALIDATE_IP)
                 ? [$host]
                 : array_reverse(explode('.', $host));
 			$re = strtr($re, [
@@ -269,7 +269,7 @@ class Route implements Router
 
 		} else {
 			$host = $refUrl->getHost();
-            $parts = filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+            $parts = filter_var($host, FILTER_VALIDATE_IP)
                 ? [$host]
                 : array_reverse(explode('.', $host));
             $port = $refUrl->getDefaultPort() === ($tmp = $refUrl->getPort()) ? '' : ':' . $tmp;
