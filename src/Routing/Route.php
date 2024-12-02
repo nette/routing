@@ -159,6 +159,7 @@ class Route implements Router
 		// 1) URL MASK
 		$url = $httpRequest->getUrl();
 		$re = $this->re;
+        $basePath = $url->getBasePath() . '/';
 
 		if ($this->type === self::Host) {
 			$host = $url->getHost();
@@ -167,7 +168,7 @@ class Route implements Router
                 ? [$host]
                 : array_reverse(explode('.', $host));
 			$re = strtr($re, [
-				'/%basePath%/' => preg_quote($url->getBasePath(), '#'),
+                '/%basePath%/' => preg_quote($basePath, '#'),
 				'%tld%' => preg_quote($parts[0], '#'),
 				'%domain%' => preg_quote(isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0], '#'),
 				'%sld%' => preg_quote($parts[1] ?? '', '#'),
@@ -175,7 +176,6 @@ class Route implements Router
 			]);
 
 		} elseif ($this->type === self::Relative) {
-			$basePath = $url->getBasePath();
 			if (strncmp($url->getPath(), $basePath, strlen($basePath)) !== 0) {
 				return null;
 			}
@@ -260,9 +260,10 @@ class Route implements Router
 			return null;
 		}
 
-		// absolutize
+        // absolutize
+        $basePath = $refUrl->getBasePath() . '/';
 		if ($this->type === self::Relative) {
-			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $refUrl->getBasePath() . $url;
+            $url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $basePath . $url;
 
 		} elseif ($this->type === self::Path) {
 			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $url;
@@ -274,7 +275,7 @@ class Route implements Router
                 : array_reverse(explode('.', $host));
             $port = $refUrl->getDefaultPort() === ($tmp = $refUrl->getPort()) ? '' : ':' . $tmp;
 			$url = strtr($url, [
-				'/%basePath%/' => $refUrl->getBasePath(),
+                '/%basePath%/' => $basePath,
 				'%tld%' => $parts[0] . $port,
 				'%domain%' => (isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0]) . $port,
 				'%sld%' => $parts[1] ?? '',
