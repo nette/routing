@@ -163,9 +163,9 @@ class Route implements Router
 		if ($this->type === self::Host) {
 			$host = $url->getHost();
 			$path = '//' . $host . $url->getPath();
-			$parts = ip2long($host)
-				? [$host]
-				: array_reverse(explode('.', $host));
+            $parts = filter_var($host, FILTER_VALIDATE_IP)
+                ? [$host]
+                : array_reverse(explode('.', $host));
 			$re = strtr($re, [
 				'/%basePath%/' => preg_quote($url->getBasePath(), '#'),
 				'%tld%' => preg_quote($parts[0], '#'),
@@ -269,10 +269,10 @@ class Route implements Router
 
 		} else {
 			$host = $refUrl->getHost();
-			$parts = ip2long($host)
-				? [$host]
-				: array_reverse(explode('.', $host));
-			$port = $refUrl->getDefaultPort() === ($tmp = $refUrl->getPort()) ? '' : ':' . $tmp;
+            $parts = filter_var($host, FILTER_VALIDATE_IP)
+                ? [$host]
+                : array_reverse(explode('.', $host));
+            $port = $refUrl->getDefaultPort() === ($tmp = $refUrl->getPort()) ? '' : ':' . $tmp;
 			$url = strtr($url, [
 				'/%basePath%/' => $refUrl->getBasePath(),
 				'%tld%' => $parts[0] . $port,
