@@ -289,7 +289,7 @@ class RouteList implements Router
 
 	private function expandDomain(string $host): string
 	{
-		$parts = ip2long($host) ? [$host] : array_reverse(explode('.', $host));
+		$parts = filter_var($host, FILTER_VALIDATE_IP) ? [$host] : array_reverse(explode('.', $host));
 		return strtr($this->domain, [
 			'%tld%' => $parts[0],
 			'%domain%' => isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0],
