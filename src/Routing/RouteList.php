@@ -67,7 +67,7 @@ class RouteList implements Router
 			$url = $httpRequest->getUrl();
 			$relativePath = $url->getRelativePath();
 			if (strncmp($relativePath, $this->path, strlen($this->path)) === 0) {
-				$url = $url->withPath($url->getPath(), $url->getBasePath() . $this->path);
+                $url = $url->withPath($url->getPath(), $url->getBasePath() . '/' . $this->path);
 			} elseif ($relativePath . '/' === $this->path) {
 				$url = $url->withPath($url->getPath() . '/');
 			} else {
@@ -104,7 +104,7 @@ class RouteList implements Router
 
 		if ($this->path) {
 			if (!isset($this->refUrlCache[$refUrl])) {
-				$this->refUrlCache[$refUrl] = $refUrl->withPath($refUrl->getBasePath() . $this->path);
+                $this->refUrlCache[$refUrl] = $refUrl->withPath($refUrl->getBasePath() . '/' . $this->path);
 			}
 
 			$refUrl = $this->refUrlCache[$refUrl];
