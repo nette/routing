@@ -163,11 +163,11 @@ class Route implements Router
 		if ($this->type === self::Host) {
 			$host = $url->getHost();
 			$path = '//' . $host . $url->getPath();
-			$parts = ip2long($host)
-				? [$host]
-				: array_reverse(explode('.', $host));
+            $parts = filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+                ? [$host]
+                : array_reverse(explode('.', $host));
 			$re = strtr($re, [
-				'/%basePath%/' => preg_quote($url->getBasePath(), '#'),
+                '/%basePath%/' => preg_quote($url->getBasePath() . '/', '#'),
 				'%tld%' => preg_quote($parts[0], '#'),
 				'%domain%' => preg_quote(isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0], '#'),
 				'%sld%' => preg_quote($parts[1] ?? '', '#'),
@@ -176,11 +176,11 @@ class Route implements Router
 
 		} elseif ($this->type === self::Relative) {
 			$basePath = $url->getBasePath();
-			if (strncmp($url->getPath(), $basePath, strlen($basePath)) !== 0) {
+            if (strncmp($url->getPath(), $basePath.'/', strlen($basePath.'/')) !== 0) {
 				return null;
 			}
 
-			$path = substr($url->getPath(), strlen($basePath));
+            $path = substr($url->getPath(), strlen($basePath.'/'));
 
 		} else {
 			$path = $url->getPath();
@@ -262,19 +262,19 @@ class Route implements Router
 
 		// absolutize
 		if ($this->type === self::Relative) {
-			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $refUrl->getBasePath() . $url;
+            $url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $refUrl->getBasePath() . '/' . $url;
 
 		} elseif ($this->type === self::Path) {
 			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $url;
 
 		} else {
 			$host = $refUrl->getHost();
-			$parts = ip2long($host)
-				? [$host]
-				: array_reverse(explode('.', $host));
-			$port = $refUrl->getDefaultPort() === ($tmp = $refUrl->getPort()) ? '' : ':' . $tmp;
+            $parts = filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)
+                ? [$host]
+                : array_reverse(explode('.', $host));
+            $port = $refUrl->getDefaultPort() === ($tmp = $refUrl->getPort()) ? '' : ':' . $tmp;
 			$url = strtr($url, [
-				'/%basePath%/' => $refUrl->getBasePath(),
+                '/%basePath%/' => $refUrl->getBasePath() . '/',
 				'%tld%' => $parts[0] . $port,
 				'%domain%' => (isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0]) . $port,
 				'%sld%' => $parts[1] ?? '',
