@@ -1,5 +1,4 @@
-Nette Routing: two-ways URL conversion
-**************************************
+# Nette Routing: two-ways URL conversion
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/routing.svg)](https://packagist.org/packages/nette/routing)
 [![Tests](https://github.com/nette/routing/workflows/Tests/badge.svg?branch=master)](https://github.com/nette/routing/actions)
