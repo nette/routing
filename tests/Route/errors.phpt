@@ -16,23 +16,23 @@ require __DIR__ . '/../bootstrap.php';
 Assert::exception(
 	fn() => new Route('[a'),
 	Nette\InvalidArgumentException::class,
-	"Unexpected '[' in mask '[a'."
+	"Unexpected '[' in mask '[a'.",
 );
 
 Assert::exception(
 	fn() => new Route('a]'),
 	Nette\InvalidArgumentException::class,
-	"Missing '[' in mask 'a]'."
+	"Missing '[' in mask 'a]'.",
 );
 
 Assert::exception(
 	fn() => new Route('<presenter>/<action'),
 	Nette\InvalidArgumentException::class,
-	"Unexpected '/<action' in mask '<presenter>/<action'."
+	"Unexpected '/<action' in mask '<presenter>/<action'.",
 );
 
 Assert::exception(
 	fn() => new Route('<presenter>/action>'),
 	Nette\InvalidArgumentException::class,
-	"Unexpected '/action>' in mask '<presenter>/action>'."
+	"Unexpected '/action>' in mask '<presenter>/action>'.",
 );

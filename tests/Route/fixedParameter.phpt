@@ -23,7 +23,7 @@ testRouteIn($route, '/?const=hello', ['const' => 'hello', 'test' => 'testvalue']
 
 Assert::same(
 	'http://example.com/',
-	testRouteOut($route, [])
+	testRouteOut($route, []),
 );
 
 Assert::null(testRouteOut($route, ['const' => 'foo']));
@@ -35,5 +35,5 @@ Assert::same(
 
 Assert::same(
 	'http://example.com/',
-	testRouteOut($route, ['const' => null])
+	testRouteOut($route, ['const' => null]),
 );
