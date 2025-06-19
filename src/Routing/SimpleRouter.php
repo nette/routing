@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\Routing;
 
 use Nette;
+use function http_build_query, ini_get, is_scalar;
 
 
 /**

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\Routing;
 
 use Nette;
+use function array_column, array_filter, array_keys, array_reverse, array_splice, count, explode, ip2long, is_scalar, rtrim, strlen, strncmp, strtr;
 
 
 /**
