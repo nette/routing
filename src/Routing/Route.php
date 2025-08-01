@@ -235,8 +235,8 @@ class Route implements Router
 			}
 		}
 
-		if (isset($this->metadata[null][self::FilterIn])) {
-			$params = $this->metadata[null][self::FilterIn]($params);
+		if (isset($this->metadata[''][self::FilterIn])) {
+			$params = $this->metadata[''][self::FilterIn]($params);
 			if ($params === null) {
 				return null;
 			}
@@ -297,7 +297,7 @@ class Route implements Router
 
 	private function preprocessParams(array &$params): bool
 	{
-		$filter = $this->metadata[null][self::FilterOut] ?? null;
+		$filter = $this->metadata[''][self::FilterOut] ?? null;
 		if ($filter) {
 			$params = $filter($params);
 			if ($params === null) {

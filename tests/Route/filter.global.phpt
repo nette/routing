@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $route = new Route('<presenter>', [
-	null => [
+	'' => [
 		Route::FilterIn => function (array $arr) {
 			if (substr($arr['presenter'], 0, 3) !== 'abc') {
 				return null;
@@ -48,7 +48,7 @@ Assert::null(testRouteOut($route, ['presenter' => 'cde']));
 
 
 $route = new Route('<lang>/<presenter>/<action>', [
-	null => [
+	'' => [
 		Route::FilterIn => function (array $arr) {
 			if ($arr['presenter'] !== 'abc-cs') {
 				return null;

@@ -116,7 +116,7 @@ class RouteList implements Router
 			$this->warmupCache();
 		}
 
-		$key = $params[$this->cacheKey] ?? null;
+		$key = $params[$this->cacheKey ?? ''] ?? null;
 		if (!is_scalar($key) || !isset($this->ranks[$key])) {
 			$key = '*';
 		}
@@ -167,7 +167,7 @@ class RouteList implements Router
 		$ranks = ['*' => []];
 
 		foreach ($routers as [$router, $params]) {
-			$value = $params[$this->cacheKey] ?? null;
+			$value = $params[$this->cacheKey ?? ''] ?? null;
 			$values = $value === null
 				? array_keys($ranks)
 				: [is_scalar($value) ? $value : '*'];
