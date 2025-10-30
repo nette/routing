@@ -26,7 +26,7 @@ into a parameter array, `constructUrl()` builds a URL from parameters. This is t
 standalone package (`Nette\Routing\*`); `Nette\Application\Routers\*` subclasses
 add the presenter/action/module conventions on top and live in `nette/application`.
 
-- **PHP Version**: 8.1 - 8.6
+- **PHP Version**: 8.3 - 8.6
 - **Package**: `nette/routing` (deps: `nette/http`, `nette/utils`)
 
 ## Essential Commands
