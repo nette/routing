@@ -12,8 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 The routing layer is completely decoupled from application logic, allowing URL structure to be designed or changed without modifying code.
 
 **Key Characteristics:**
-- PHP 8.1-8.5 support
-- Current branch: v3.1
+- PHP 8.2-8.5 support
+- Current branch: v4.0
 - Triple licensed: BSD-3-Clause, GPL-2.0, GPL-3.0
 - Dependencies: `nette/http` (^3.2 || ~4.0.0), `nette/utils` (^4.0)
 
@@ -277,7 +277,7 @@ Each test validates bidirectional behavior - both matching incoming URLs and gen
 **Route-Specific Patterns:**
 - Private constants for internal state (e.g., `Fixity`, `Default`, `FilterTableOut`)
 - Protected methods allow extensibility
-- Extensive use of PHP 8.1+ features (readonly properties, named parameters)
+- Extensive use of PHP 8.2+ features (readonly properties, named parameters)
 
 **Import Style:**
 ```php
@@ -289,7 +289,7 @@ use function is_string, preg_match, str_contains;
 ## CI/CD Pipeline
 
 GitHub Actions workflow runs:
-1. **Tests** - PHP 8.1, 8.2, 8.3, 8.4, 8.5 matrix
+1. **Tests** - PHP 8.2, 8.3, 8.4, 8.5 matrix
 2. **Lowest Dependencies** - Ensures minimum version compatibility
 3. **Code Coverage** - Reports sent to Coveralls
 4. **Coding Style** - Automated style validation
