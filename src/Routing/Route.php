@@ -11,7 +11,7 @@ namespace Nette\Routing;
 
 use Nette;
 use Nette\Utils\Strings;
-use function array_flip, array_key_exists, array_pop, array_reverse, array_unshift, count, explode, http_build_query, ini_get, ip2long, is_array, is_scalar, is_string, ltrim, preg_match, preg_quote, preg_replace_callback, rawurldecode, rawurlencode, str_starts_with, strlen, strncmp, strpbrk, strtr, substr, trim;
+use function array_flip, array_key_exists, array_pop, array_reverse, array_unshift, count, explode, http_build_query, ini_get, ip2long, is_array, is_scalar, is_string, ltrim, preg_match, preg_quote, preg_replace_callback, rawurldecode, rawurlencode, str_starts_with, strlen, strpbrk, strtr, substr, trim;
 
 
 /**
@@ -176,7 +176,7 @@ class Route implements Router
 
 		} elseif ($this->type === self::Relative) {
 			$basePath = $url->getBasePath();
-			if (strncmp($url->getPath(), $basePath, strlen($basePath)) !== 0) {
+			if (!str_starts_with($url->getPath(), $basePath)) {
 				return null;
 			}
 
