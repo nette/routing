@@ -68,7 +68,7 @@ class RouteList implements Router
 		if ($this->path) {
 			$url = $httpRequest->getUrl();
 			$relativePath = $url->getRelativePath();
-			if (strncmp($relativePath, $this->path, strlen($this->path)) === 0) {
+			if (str_starts_with($relativePath, $this->path)) {
 				$url = $url->withPath($url->getPath(), $url->getBasePath() . $this->path);
 			} elseif ($relativePath . '/' === $this->path) {
 				$url = $url->withPath($url->getPath() . '/');
@@ -148,7 +148,7 @@ class RouteList implements Router
 				? $router->getConstantParameters()
 				: [];
 
-			foreach (array_filter($params, 'is_scalar') as $name => $value) {
+			foreach (array_filter($params, is_scalar(...)) as $name => $value) {
 				$candidates[$name][$value] = true;
 			}
 

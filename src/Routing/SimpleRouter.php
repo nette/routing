@@ -18,12 +18,9 @@ use function http_build_query, ini_get, is_scalar;
  */
 class SimpleRouter implements Router
 {
-	private array $defaults;
-
-
-	public function __construct(array $defaults = [])
-	{
-		$this->defaults = $defaults;
+	public function __construct(
+		private readonly array $defaults = [],
+	) {
 	}
 
 

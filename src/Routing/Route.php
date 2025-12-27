@@ -176,7 +176,7 @@ class Route implements Router
 
 		} elseif ($this->type === self::Relative) {
 			$basePath = $url->getBasePath();
-			if (strncmp($url->getPath(), $basePath, strlen($basePath)) !== 0) {
+			if (!str_starts_with($url->getPath(), $basePath)) {
 				return null;
 			}
 
