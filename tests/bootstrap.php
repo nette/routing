@@ -14,13 +14,8 @@ if (@!include __DIR__ . '/../vendor/autoload.php') {
 
 
 Tester\Environment::setup();
+Tester\Environment::setupFunctions();
 date_default_timezone_set('Europe/Prague');
-
-
-function test(string $title, Closure $function): void
-{
-	$function();
-}
 
 
 function testRouteIn(Nette\Routing\Router $route, string $relativeUrl, ?array $expectedParams = null, ?string $expectedUrl = null): void

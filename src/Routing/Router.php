@@ -22,11 +22,13 @@ interface Router
 
 	/**
 	 * Maps HTTP request to an array.
+	 * @return ?array<string, mixed>
 	 */
 	function match(Nette\Http\IRequest $httpRequest): ?array;
 
 	/**
 	 * Constructs absolute URL from array.
+	 * @param array<string, mixed>  $params
 	 */
 	function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string;
 }

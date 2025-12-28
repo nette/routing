@@ -18,6 +18,9 @@ use function http_build_query, ini_get, is_scalar;
  */
 class SimpleRouter implements Router
 {
+	/**
+	 * @param array<string, mixed>  $defaults default values
+	 */
 	public function __construct(
 		private readonly array $defaults = [],
 	) {
@@ -26,6 +29,7 @@ class SimpleRouter implements Router
 
 	/**
 	 * Maps HTTP request to an array.
+	 * @return ?array<string, mixed>
 	 */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
 	{
@@ -37,6 +41,7 @@ class SimpleRouter implements Router
 
 	/**
 	 * Constructs absolute URL from array.
+	 * @param array<string, mixed>  $params
 	 */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
@@ -62,6 +67,7 @@ class SimpleRouter implements Router
 
 	/**
 	 * Returns default values.
+	 * @return array<string, mixed>
 	 */
 	public function getDefaults(): array
 	{
