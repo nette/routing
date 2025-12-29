@@ -7,28 +7,34 @@
 declare(strict_types=1);
 
 use Nette\Routing\Route;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
 
 
-$route = new Route('<presenter>', [
-	'presenter' => [
-		Route::FilterTable => [
-			'produkt' => 'product',
-			'kategorie' => 'category',
-			'zakaznik' => 'customer',
-			'kosik' => 'basket',
+test('FilterTable translates values bidirectionally', function () {
+	$route = new Route('<lang>', [
+		'lang' => [
+			Route::FilterTable => [
+				'cs' => 'czech',
+				'en' => 'english',
+			],
 		],
-	],
-]);
+	]);
 
-testRouteIn($route, '/kategorie/', [
-	'presenter' => 'category',
-	'test' => 'testvalue',
-], '/kategorie?test=testvalue');
+	// URL value 'cs' is translated to 'czech' in params
+	testRouteIn($route, '/cs', [
+		'lang' => 'czech',
+		'test' => 'testvalue',
+	], '/cs?test=testvalue');
 
-testRouteIn($route, '/other/', [
-	'presenter' => 'other',
-	'test' => 'testvalue',
-], '/other?test=testvalue');
+	// Param value 'czech' is translated back to 'cs' in URL
+	Assert::same('http://example.com/cs', testRouteOut($route, ['lang' => 'czech']));
+
+	// Non-table values pass through unchanged
+	testRouteIn($route, '/de', [
+		'lang' => 'de',
+		'test' => 'testvalue',
+	], '/de?test=testvalue');
+});
