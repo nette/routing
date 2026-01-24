@@ -23,7 +23,7 @@ class RouteList implements Router
 	/** @var list<array{Router, int}> */
 	private array $list = [];
 
-	/** @var array<string|int, list<Router>>|null */
+	/** @var array<string, list<Router>>|null */
 	private ?array $ranks = null;
 	private ?string $cacheKey;
 	private ?string $domain = null;

@@ -18,10 +18,8 @@ use function http_build_query, ini_get, is_scalar;
  */
 class SimpleRouter implements Router
 {
-	/**
-	 * @param array<string, mixed>  $defaults default values
-	 */
 	public function __construct(
+		/** @var array<string, mixed> */
 		private readonly array $defaults = [],
 	) {
 	}

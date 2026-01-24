@@ -65,6 +65,7 @@ class Route implements Router
 		InPath = 1, // in brackets is default value = null
 		Constant = 2;
 
+	/** @var array<string, array<string, mixed>> */
 	protected array $defaultMeta = [
 		'#' => [ // default style for path parameters
 			self::Pattern => '[^/]+',
@@ -659,7 +660,7 @@ class Route implements Router
 	public static function param2path(string $s): string
 	{
 		// segment + "/", see https://datatracker.ietf.org/doc/html/rfc3986#appendix-A
-		return preg_replace_callback(
+		return (string) preg_replace_callback(
 			'#[^\w.~!$&\'()*+,;=:@"/-]#',
 			fn($m) => rawurlencode($m[0]),
 			$s,
