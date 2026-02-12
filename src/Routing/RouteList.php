@@ -29,12 +29,13 @@ class RouteList implements Router
 	private ?string $domain = null;
 	private ?string $path = null;
 
-	/** @var ?\SplObjectStorage<Nette\Http\UrlScript, Nette\Http\UrlScript> */
-	private ?\SplObjectStorage $refUrlCache;
+	/** @var \SplObjectStorage<Nette\Http\UrlScript, Nette\Http\UrlScript> */
+	private \SplObjectStorage $refUrlCache;
 
 
 	public function __construct()
 	{
+		$this->refUrlCache = new \SplObjectStorage;
 	}
 
 
@@ -103,29 +104,31 @@ class RouteList implements Router
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
 		if ($this->domain) {
-			if (!isset($this->refUrlCache[$refUrl])) {
-				$this->refUrlCache[$refUrl] = $refUrl->withHost(
+			if (!$this->refUrlCache->offsetExists($refUrl)) {
+				$this->refUrlCache->offsetSet($refUrl, $refUrl->withHost(
 					$this->expandDomain($refUrl->getHost()),
-				);
+				));
 			}
 
-			$refUrl = $this->refUrlCache[$refUrl];
+			$refUrl = $this->refUrlCache->offsetGet($refUrl);
 		}
 
 		if ($this->path) {
-			if (!isset($this->refUrlCache[$refUrl])) {
-				$this->refUrlCache[$refUrl] = $refUrl->withPath($refUrl->getBasePath() . $this->path);
+			if (!$this->refUrlCache->offsetExists($refUrl)) {
+				$this->refUrlCache->offsetSet($refUrl, $refUrl->withPath($refUrl->getBasePath() . $this->path));
 			}
 
-			$refUrl = $this->refUrlCache[$refUrl];
+			$refUrl = $this->refUrlCache->offsetGet($refUrl);
 		}
 
 		if ($this->ranks === null) {
 			$this->warmupCache();
 		}
 
+		assert($this->ranks !== null);
 		$key = $params[$this->cacheKey ?? ''] ?? null;
-		if (!is_scalar($key) || !isset($this->ranks[$key])) {
+		$key = is_scalar($key) ? (string) $key : '*';
+		if (!isset($this->ranks[$key])) {
 			$key = '*';
 		}
 
@@ -157,7 +160,7 @@ class RouteList implements Router
 				: [];
 
 			foreach (array_filter($params, is_scalar(...)) as $name => $value) {
-				$candidates[$name][$value] = true;
+				$candidates[$name][(string) $value] = true;
 			}
 
 			$routers[] = [$router, $params];
@@ -178,9 +181,10 @@ class RouteList implements Router
 			$value = $params[$this->cacheKey ?? ''] ?? null;
 			$values = $value === null
 				? array_keys($ranks)
-				: [is_scalar($value) ? $value : '*'];
+				: [is_scalar($value) ? (string) $value : '*'];
 
 			foreach ($values as $value) {
+				$value = (string) $value;
 				if (!isset($ranks[$value])) {
 					$ranks[$value] = $ranks['*'];
 				}
@@ -304,6 +308,7 @@ class RouteList implements Router
 
 	private function expandDomain(string $host): string
 	{
+		assert($this->domain !== null);
 		$parts = ip2long($host) ? [$host] : array_reverse(explode('.', $host));
 		return strtr($this->domain, [
 			'%tld%' => $parts[0],

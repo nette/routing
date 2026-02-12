@@ -1,5 +1,20 @@
 parameters:
-	level: 5
+	level: 8
 
 	paths:
 		- src
+
+	ignoreErrors:
+		-   # withUrl() is defined in Request class but not in IRequest interface
+			identifier: method.notFound
+			path: src/Routing/RouteList.php
+
+		-   # Intentional Nette pattern for fluent API
+			identifier: new.static
+			path: src/Routing/RouteList.php
+
+		-   # Backward iteration through structured array from regex split.
+			# The pattern produces predictable 5-element groups; algorithm
+			# decrements $i by known amounts. PHPStan cannot track invariants.
+			identifier: offsetAccess.notFound
+			path: src/Routing/Route.php
