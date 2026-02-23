@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Routing\SimpleRouter basic functions.
  */
-
-declare(strict_types=1);
 
 use Nette\Http;
 use Nette\Routing\SimpleRouter;

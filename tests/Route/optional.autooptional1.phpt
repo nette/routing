@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Routing\Route and auto-optional as optional sequences.
  */
-
-declare(strict_types=1);
 
 use Nette\Routing\Route;
 

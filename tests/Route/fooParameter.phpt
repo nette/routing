@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Routing\Route with FooParameter
  */
-
-declare(strict_types=1);
 
 use Nette\Routing\Route;
 

@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Routing\Route with host & protocol
  */
-
-declare(strict_types=1);
 
 use Nette\Routing\Route;
 

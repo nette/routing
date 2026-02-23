@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Routing\Route with Secured
  */
-
-declare(strict_types=1);
 
 use Nette\Http\UrlScript;
 use Nette\Routing\Route;

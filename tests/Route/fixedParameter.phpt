@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Test: Nette\Routing\Route and constant parameter.
  */
-
-declare(strict_types=1);
 
 use Nette\Routing\Route;
 use Tester\Assert;
