@@ -18,14 +18,16 @@ class RouteList implements Router
 {
 	protected ?self $parent;
 
-	/** @var array<array{Router, int}> */
+	/** @var list<array{Router, int}> */
 	private array $list = [];
 
-	/** @var Router[][]|null */
+	/** @var array<string, list<Router>>|null */
 	private ?array $ranks = null;
 	private ?string $cacheKey;
 	private ?string $domain = null;
 	private ?string $path = null;
+
+	/** @var ?\SplObjectStorage<Nette\Http\UrlScript, Nette\Http\UrlScript> */
 	private ?\SplObjectStorage $refUrlCache;
 
 
@@ -36,6 +38,7 @@ class RouteList implements Router
 
 	/**
 	 * Maps HTTP request to an array.
+	 * @return ?array<string, mixed>
 	 * @final
 	 */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
@@ -81,6 +84,10 @@ class RouteList implements Router
 	}
 
 
+	/**
+	 * @param array<string, mixed>  $params
+	 * @return ?array<string, mixed>
+	 */
 	protected function completeParameters(array $params): ?array
 	{
 		return $params;
@@ -89,6 +96,7 @@ class RouteList implements Router
 
 	/**
 	 * Constructs absolute URL from array.
+	 * @param array<string, mixed>  $params
 	 */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
@@ -220,8 +228,8 @@ class RouteList implements Router
 
 
 	/**
-	 * @param  string  $mask  e.g. '<presenter>/<action>/<id \d{1,3}>'
-	 * @param  array  $metadata  default values or metadata
+	 * @param string  $mask e.g. '<presenter>/<action>/<id \d{1,3}>'
+	 * @param array<string, mixed>  $metadata default values or metadata
 	 * @return static
 	 */
 	public function addRoute(string $mask, array $metadata = [], int $oneWay = 0)
@@ -263,7 +271,7 @@ class RouteList implements Router
 
 
 	/**
-	 * @return Router[]
+	 * @return list<Router>
 	 */
 	public function getRouters(): array
 	{
@@ -272,7 +280,7 @@ class RouteList implements Router
 
 
 	/**
-	 * @return int[]
+	 * @return list<int>
 	 */
 	public function getFlags(): array
 	{

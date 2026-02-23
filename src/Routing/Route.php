@@ -63,6 +63,7 @@ class Route implements Router
 		InPath = 1, // in brackets is default value = null
 		Constant = 2;
 
+	/** @var array<string, array<string, mixed>> */
 	protected array $defaultMeta = [
 		'#' => [ // default style for path parameters
 			self::Pattern => '[^/]+',
@@ -71,16 +72,20 @@ class Route implements Router
 	];
 
 	private string $mask;
+
+	/** @var list<string> */
 	private array $sequence;
 
 	/** regular expression pattern */
 	private string $re;
 
-	/** @var string[]  parameter aliases in regular expression */
+	/** @var array<string, string> parameter aliases in regular expression */
 	private array $aliases = [];
 
-	/** @var array of [value & fixity, filterIn, filterOut] */
+	/** @var array<string, array<string, mixed>> of [value & fixity, filterIn, filterOut] */
 	private array $metadata = [];
+
+	/** @var array<string, string> */
 	private array $xlat = [];
 
 	/** Host, Path, Relative */
@@ -91,7 +96,8 @@ class Route implements Router
 
 
 	/**
-	 * @param  string  $mask  e.g. '<presenter>/<action>/<id \d{1,3}>'
+	 * @param string  $mask e.g. '<presenter>/<action>/<id \d{1,3}>'
+	 * @param array<string, mixed>  $metadata default values or metadata
 	 */
 	public function __construct(string $mask, array $metadata = [])
 	{
@@ -110,7 +116,10 @@ class Route implements Router
 	}
 
 
-	/** @internal */
+	/**
+	 * @internal
+	 * @return array<string, array<string, mixed>>
+	 */
 	protected function getMetadata(): array
 	{
 		return $this->metadata;
@@ -119,6 +128,7 @@ class Route implements Router
 
 	/**
 	 * Returns default values.
+	 * @return array<string, mixed>
 	 */
 	public function getDefaults(): array
 	{
@@ -133,7 +143,10 @@ class Route implements Router
 	}
 
 
-	/** @internal */
+	/**
+	 * @internal
+	 * @return array<string, mixed>
+	 */
 	public function getConstantParameters(): array
 	{
 		$res = [];
@@ -149,6 +162,7 @@ class Route implements Router
 
 	/**
 	 * Maps HTTP request to an array.
+	 * @return ?array<string, mixed>
 	 */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
 	{
@@ -246,6 +260,7 @@ class Route implements Router
 
 	/**
 	 * Constructs absolute URL from array.
+	 * @param array<string, mixed>  $params
 	 */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
@@ -293,6 +308,7 @@ class Route implements Router
 	}
 
 
+	/** @param array<string, mixed>  $params */
 	private function preprocessParams(array &$params): bool
 	{
 		$filter = $this->metadata[''][self::FilterOut] ?? null;
@@ -348,6 +364,7 @@ class Route implements Router
 	}
 
 
+	/** @param array<string, mixed>  $params */
 	private function compileUrl(array &$params): ?string
 	{
 		$brackets = [];
@@ -416,6 +433,10 @@ class Route implements Router
 	}
 
 
+	/**
+	 * @param array<string, mixed>  $metadata
+	 * @return array<string, array<string, mixed>>
+	 */
 	private function normalizeMetadata(array $metadata): array
 	{
 		foreach ($metadata as $name => $meta) {
@@ -562,6 +583,7 @@ class Route implements Router
 	}
 
 
+	/** @param list<string>  $parts */
 	private function parseQuery(array $parts): bool
 	{
 		$query = $parts[count($parts) - 2] ?? '';
@@ -599,6 +621,9 @@ class Route implements Router
 
 	/**
 	 * Rename keys in array.
+	 * @param array<string, mixed>  $arr
+	 * @param array<string, string>  $xlat
+	 * @return array<string, mixed>
 	 */
 	private static function renameKeys(array $arr, array $xlat): array
 	{
