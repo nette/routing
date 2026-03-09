@@ -12,7 +12,7 @@ use function array_column, array_filter, array_keys, array_reverse, array_splice
 
 
 /**
- * The router broker.
+ * Router collection that tries each router in sequence and caches URL construction lookups.
  */
 class RouteList implements Router
 {
@@ -38,7 +38,6 @@ class RouteList implements Router
 
 
 	/**
-	 * Maps HTTP request to an array.
 	 * @return ?array<string, mixed>
 	 * @final
 	 */
@@ -95,10 +94,7 @@ class RouteList implements Router
 	}
 
 
-	/**
-	 * Constructs absolute URL from array.
-	 * @param array<string, mixed>  $params
-	 */
+	/** @param array<string, mixed>  $params */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
 		if ($this->domain) {
@@ -141,6 +137,10 @@ class RouteList implements Router
 	}
 
 
+	/**
+	 * Builds an internal lookup index of routers grouped by their most discriminating constant parameter.
+	 * Call this before URL generation to improve performance; called automatically on first use.
+	 */
 	public function warmupCache(): void
 	{
 		// find best key
@@ -232,6 +232,7 @@ class RouteList implements Router
 
 
 	/**
+	 * Creates a Route from the mask and adds it to the list.
 	 * @param string  $mask e.g. '<presenter>/<action>/<id \d{1,3}>'
 	 * @param array<string, mixed>  $metadata default values or metadata
 	 * @return static
@@ -244,7 +245,7 @@ class RouteList implements Router
 
 
 	/**
-	 * Returns an iterator over all routers.
+	 * Creates a child RouteList scoped to the given domain and adds it to this list.
 	 */
 	public function withDomain(string $domain): static
 	{
@@ -257,6 +258,9 @@ class RouteList implements Router
 	}
 
 
+	/**
+	 * Creates a child RouteList scoped to the given path prefix and adds it to this list.
+	 */
 	public function withPath(string $path): static
 	{
 		$router = new static;
@@ -268,6 +272,9 @@ class RouteList implements Router
 	}
 
 
+	/**
+	 * Returns the parent RouteList, used to end a withDomain()/withPath() chain.
+	 */
 	public function end(): ?self
 	{
 		return $this->parent;
@@ -275,6 +282,7 @@ class RouteList implements Router
 
 
 	/**
+	 * Returns all routers in this list.
 	 * @return list<Router>
 	 */
 	public function getRouters(): array
@@ -284,6 +292,7 @@ class RouteList implements Router
 
 
 	/**
+	 * Returns the flags (e.g. ONE_WAY) for each router in this list.
 	 * @return list<int>
 	 */
 	public function getFlags(): array

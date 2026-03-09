@@ -13,8 +13,7 @@ use function array_flip, array_key_exists, array_pop, array_reverse, array_unshi
 
 
 /**
- * The bidirectional route is responsible for mapping
- * HTTP request to an array for dispatch and vice-versa.
+ * Bidirectional route mapping between HTTP requests and parameter arrays using a URL mask.
  */
 class Route implements Router
 {
@@ -107,9 +106,6 @@ class Route implements Router
 	}
 
 
-	/**
-	 * Returns mask.
-	 */
 	public function getMask(): string
 	{
 		return $this->mask;
@@ -126,10 +122,7 @@ class Route implements Router
 	}
 
 
-	/**
-	 * Returns default values.
-	 * @return array<string, mixed>
-	 */
+	/** @return array<string, mixed> */
 	public function getDefaults(): array
 	{
 		$defaults = [];
@@ -144,6 +137,7 @@ class Route implements Router
 
 
 	/**
+	 * Returns parameters that must have a specific fixed value for the route to match.
 	 * @internal
 	 * @return array<string, mixed>
 	 */
@@ -160,10 +154,7 @@ class Route implements Router
 	}
 
 
-	/**
-	 * Maps HTTP request to an array.
-	 * @return ?array<string, mixed>
-	 */
+	/** @return ?array<string, mixed> */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
 	{
 		// combine with precedence: mask (params in URL-path), fixity, query, (post,) defaults
@@ -258,10 +249,7 @@ class Route implements Router
 	}
 
 
-	/**
-	 * Constructs absolute URL from array.
-	 * @param array<string, mixed>  $params
-	 */
+	/** @param array<string, mixed>  $params */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
 		if (!$this->preprocessParams($params)) {
@@ -620,7 +608,7 @@ class Route implements Router
 
 
 	/**
-	 * Rename keys in array.
+	 * Renames keys in array according to the translation table.
 	 * @param array<string, mixed>  $arr
 	 * @param array<string, string>  $xlat
 	 * @return array<string, mixed>
@@ -647,7 +635,7 @@ class Route implements Router
 
 
 	/**
-	 * Url encode.
+	 * Encodes a parameter value for use in a URL path segment, leaving allowed characters unencoded.
 	 */
 	public static function param2path(string $s): string
 	{
