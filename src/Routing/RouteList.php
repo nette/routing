@@ -26,6 +26,7 @@ class RouteList implements Router
 	private ?string $cacheKey;
 	private ?string $domain = null;
 	private ?string $path = null;
+	private bool $strictDefaults = false;
 
 	/** @var \SplObjectStorage<Nette\Http\UrlScript, Nette\Http\UrlScript> */
 	private \SplObjectStorage $refUrlCache;
@@ -196,10 +197,28 @@ class RouteList implements Router
 
 
 	/**
+	 * When enabled, routes reject URLs whose path explicitly contains a parameter value equal to its default,
+	 * so only the canonical form of each URL is accepted. Applies to all current and future routes in this list.
+	 */
+	public function setStrictDefaults(bool $state = true): static
+	{
+		$this->strictDefaults = $state;
+		foreach ($this->list as [$router]) {
+			if ($router instanceof Route || $router instanceof self) {
+				$router->setStrictDefaults($state);
+			}
+		}
+
+		return $this;
+	}
+
+
+	/**
 	 * Adds a router.
 	 */
 	public function add(Router $router, int $oneWay = 0): static
 	{
+		$this->applyStrictDefaults($router);
 		$this->list[] = [$router, $oneWay];
 		$this->ranks = null;
 		return $this;
@@ -211,8 +230,17 @@ class RouteList implements Router
 	 */
 	public function prepend(Router $router, int $oneWay = 0): void
 	{
+		$this->applyStrictDefaults($router);
 		array_splice($this->list, 0, 0, [[$router, $oneWay]]);
 		$this->ranks = null;
+	}
+
+
+	private function applyStrictDefaults(Router $router): void
+	{
+		if ($this->strictDefaults && ($router instanceof Route || $router instanceof self)) {
+			$router->setStrictDefaults($this->strictDefaults);
+		}
 	}
 
 

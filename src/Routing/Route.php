@@ -93,6 +93,8 @@ class Route implements Router
 	/** http | https */
 	private string $scheme = '';
 
+	private bool $strictDefaults = false;
+
 
 	/**
 	 * @param string  $mask e.g. '<presenter>/<action>/<id \d{1,3}>'
@@ -103,6 +105,16 @@ class Route implements Router
 		$this->mask = $mask;
 		$this->metadata = $this->normalizeMetadata($metadata);
 		$this->parseMask($this->detectMaskType());
+	}
+
+
+	/**
+	 * When enabled, the route rejects URLs whose path explicitly contains a parameter value equal to its default.
+	 */
+	public function setStrictDefaults(bool $state = true): static
+	{
+		$this->strictDefaults = $state;
+		return $this;
 	}
 
 
@@ -206,6 +218,8 @@ class Route implements Router
 			}
 		}
 
+		$pathParams = $params; // parameters explicitly present in the URL path
+
 		// 2) CONSTANT FIXITY
 		foreach ($this->metadata as $name => $meta) {
 			if (!isset($params[$name]) && isset($meta[self::Fixity]) && $meta[self::Fixity] !== self::InQuery) {
@@ -243,6 +257,10 @@ class Route implements Router
 			if ($params === null) {
 				return null;
 			}
+		}
+
+		if ($this->strictDefaults && $pathParams && !$this->isCanonicalPath($params, $pathParams)) {
+			return null; // path contains redundant default values
 		}
 
 		return $params;
@@ -399,6 +417,42 @@ class Route implements Router
 				return null; // missing parameter '$name'
 			}
 		} while (true);
+	}
+
+
+	/**
+	 * Tells whether every path parameter present in the URL also survives into the canonical URL,
+	 * i.e. the URL does not contain redundant default values that constructUrl() would omit.
+	 * @param array<string, mixed>  $params
+	 * @param array<string, mixed>  $pathParams parameters explicitly present in the URL path
+	 */
+	private function isCanonicalPath(array $params, array $pathParams): bool
+	{
+		if (!$this->preprocessParams($params)) {
+			return true; // cannot decide, keep the match
+		}
+
+		$canonical = $this->compileUrl($params);
+		if ($canonical === null) {
+			return true;
+		}
+
+		$canonical = rawurldecode($canonical);
+		if ($canonical !== '' && $canonical[-1] !== '/') {
+			$canonical .= '/';
+		}
+
+		if (!$matches = Strings::match($canonical, $this->re)) {
+			return true;
+		}
+
+		foreach ($matches as $k => $v) {
+			if (is_string($k) && $v !== '') {
+				unset($pathParams[$this->aliases[$k]]);
+			}
+		}
+
+		return !$pathParams; // any leftover path param is redundant in the canonical URL
 	}
 
 
