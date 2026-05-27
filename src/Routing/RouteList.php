@@ -16,7 +16,7 @@ use function array_column, array_filter, array_keys, array_reverse, array_splice
  */
 class RouteList implements Router
 {
-	protected ?self $parent;
+	protected ?self $parent = null;
 
 	/** @var list<array{Router, int}> */
 	private array $list = [];

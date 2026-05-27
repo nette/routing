@@ -450,7 +450,7 @@ class Route implements Router
 	private function parseMask(string $path): void
 	{
 		// <parameter-name[=default] [pattern]> or [ or ] or ?...
-		$parts = Strings::split($path, '/<([^<>= ]+)(=[^<> ]*)? *([^<>]*)>|(\[!?|\]|\s*\?.*)/');
+		$parts = Strings::split($path, '/<([^<>= ]+)(=[^<> ]*)? *([^<>]*)>|(\[!?|]|\s*\?.*)/');
 
 		$i = count($parts) - 1;
 		if ($i === 0) {
