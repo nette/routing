@@ -641,7 +641,7 @@ class Route implements Router
 	{
 		// segment + "/", see https://datatracker.ietf.org/doc/html/rfc3986#appendix-A
 		return (string) preg_replace_callback(
-			'#[^\w.~!$&\'()*+,;=:@"/-]#',
+			'#[^\w.~!$&\'()*+,;=:@/-]#',
 			fn($m) => rawurlencode($m[0]),
 			$s,
 		);

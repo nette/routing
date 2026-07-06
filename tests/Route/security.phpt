@@ -89,6 +89,23 @@ test('special characters are URL-encoded properly', function () {
 });
 
 
+test('double quotes in parameters are encoded', function () {
+	$route = new Route('<presenter>/<param>');
+
+	// double quote must be percent-encoded, otherwise it could break out of an HTML attribute
+	$url = testRouteOut($route, ['presenter' => 'search', 'param' => 'a" onmouseover=x']);
+	Assert::notNull($url);
+	Assert::contains('%22', $url);
+	Assert::notContains('"', $url);
+
+	testRouteIn($route, '/test/a%22b', [
+		'presenter' => 'test',
+		'param' => 'a"b',
+		'test' => 'testvalue',
+	], '/test/a%22b?test=testvalue');
+});
+
+
 test('query parameter pollution - extra params are preserved', function () {
 	$route = new Route('<presenter> ? page=<page>');
 
