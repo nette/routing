@@ -332,12 +332,17 @@ class Route implements Router
 				return false;
 
 			} elseif (isset($meta[self::FilterOut])) {
+				if (!is_scalar($params[$name]) && $meta[self::FilterOut] === ($this->defaultMeta['#'][self::FilterOut] ?? null)) {
+					return false; // the default filter cannot convert a non-scalar value to a path segment
+				}
+
 				$params[$name] = $meta[self::FilterOut]($params[$name]);
 			}
 
 			if (
 				isset($meta[self::Pattern])
-				&& !preg_match("#(?:{$meta[self::Pattern]})$#DA", rawurldecode((string) $params[$name]))
+				&& (!is_scalar($params[$name])
+					|| !preg_match("#(?:{$meta[self::Pattern]})$#DA", rawurldecode((string) $params[$name])))
 			) {
 				return false; // pattern not match
 			}

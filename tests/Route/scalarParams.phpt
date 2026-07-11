@@ -211,6 +211,14 @@ test('parameter with false default - false and null omitted, empty string fails'
 });
 
 
+test('non-scalar value for a path parameter fails URL generation gracefully', function () {
+	$route = new Route('<presenter>/<param>');
+
+	Assert::null(testRouteOut($route, ['presenter' => 'homepage', 'param' => [1, 2]]));
+	Assert::null(testRouteOut($route, ['presenter' => 'homepage', 'param' => new stdClass]));
+});
+
+
 test('parameter with null default - null omitted, empty string fails', function () {
 	$route = new Route('<presenter>/<param>', [
 		'param' => null,
