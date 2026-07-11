@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Nette\Routing\{Route, RouteList};
+use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -34,4 +35,25 @@ test('RouteList returns null when no route matches', function () {
 	$list->add(new Route('api/<endpoint>', ['module' => 'Api']));
 
 	testRouteIn($list, '/invalid/path');
+});
+
+
+test('RouteList is serializable, even after use', function () {
+	$list = new RouteList;
+	$list->withDomain('example.com')
+		->addRoute('<presenter>');
+
+	$restored = unserialize(serialize($list));
+	Assert::same(
+		'http://example.com/homepage',
+		testRouteOut($restored, ['presenter' => 'homepage']),
+	);
+
+	// constructUrl() populates the internal WeakMap cache, which must be excluded from serialization
+	testRouteOut($list, ['presenter' => 'homepage']);
+	$restored = unserialize(serialize($list));
+	Assert::same(
+		'http://example.com/homepage',
+		testRouteOut($restored, ['presenter' => 'homepage']),
+	);
 });

@@ -27,13 +27,25 @@ class RouteList implements Router
 	private ?string $domain = null;
 	private ?string $path = null;
 
-	/** @var \SplObjectStorage<Nette\Http\UrlScript, Nette\Http\UrlScript> */
-	private \SplObjectStorage $refUrlCache;
+	/**
+	 * Created lazily so that an unused list stays serializable.
+	 * @var \WeakMap<Nette\Http\UrlScript, Nette\Http\UrlScript>|null
+	 */
+	private ?\WeakMap $refUrlCache = null;
 
 
 	public function __construct()
 	{
-		$this->refUrlCache = new \SplObjectStorage;
+		// intentionally empty; must exist because subclasses in nette/application call parent::__construct()
+	}
+
+
+	/** @return array<string, mixed> */
+	public function __serialize(): array
+	{
+		$data = (array) $this;
+		unset($data["\0" . self::class . "\0refUrlCache"]); // WeakMap cannot be serialized
+		return $data;
 	}
 
 
@@ -98,21 +110,13 @@ class RouteList implements Router
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
 		if ($this->domain) {
-			if (!$this->refUrlCache->offsetExists($refUrl)) {
-				$this->refUrlCache->offsetSet($refUrl, $refUrl->withHost(
-					$this->expandDomain($refUrl->getHost()),
-				));
-			}
-
-			$refUrl = $this->refUrlCache->offsetGet($refUrl);
+			$this->refUrlCache ??= new \WeakMap;
+			$refUrl = $this->refUrlCache[$refUrl] ??= $refUrl->withHost($this->expandDomain($refUrl->getHost()));
 		}
 
 		if ($this->path) {
-			if (!$this->refUrlCache->offsetExists($refUrl)) {
-				$this->refUrlCache->offsetSet($refUrl, $refUrl->withPath($refUrl->getBasePath() . $this->path));
-			}
-
-			$refUrl = $this->refUrlCache->offsetGet($refUrl);
+			$this->refUrlCache ??= new \WeakMap;
+			$refUrl = $this->refUrlCache[$refUrl] ??= $refUrl->withPath($refUrl->getBasePath() . $this->path);
 		}
 
 		if ($this->ranks === null) {
@@ -251,7 +255,6 @@ class RouteList implements Router
 	{
 		$router = new static;
 		$router->domain = $domain;
-		$router->refUrlCache = new \SplObjectStorage;
 		$router->parent = $this;
 		$this->add($router);
 		return $router;
@@ -265,7 +268,6 @@ class RouteList implements Router
 	{
 		$router = new static;
 		$router->path = rtrim($path, '/') . '/';
-		$router->refUrlCache = new \SplObjectStorage;
 		$router->parent = $this;
 		$this->add($router);
 		return $router;
