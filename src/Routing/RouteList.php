@@ -8,7 +8,7 @@
 namespace Nette\Routing;
 
 use Nette;
-use function array_column, array_filter, array_keys, array_reverse, array_splice, count, explode, ip2long, is_scalar, rtrim, strtr;
+use function array_column, array_filter, array_keys, array_splice, count, is_scalar, rtrim, str_starts_with, strtr;
 
 
 /**
@@ -316,7 +316,7 @@ class RouteList implements Router
 	private function expandDomain(string $host): string
 	{
 		assert($this->domain !== null);
-		$parts = ip2long($host) ? [$host] : array_reverse(explode('.', $host));
+		$parts = Route::hostParts($host);
 		return strtr($this->domain, [
 			'%tld%' => $parts[0],
 			'%domain%' => isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0],

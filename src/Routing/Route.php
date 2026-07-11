@@ -166,9 +166,7 @@ class Route implements Router
 		if ($this->type === self::Host) {
 			$host = $url->getHost();
 			$path = '//' . $host . $url->getPath();
-			$parts = ip2long($host)
-				? [$host]
-				: array_reverse(explode('.', $host));
+			$parts = self::hostParts($host);
 			$re = strtr($re, [
 				'/%basePath%/' => preg_quote($url->getBasePath(), '#'),
 				'%tld%' => preg_quote($parts[0], '#'),
@@ -270,9 +268,7 @@ class Route implements Router
 
 		} else {
 			$host = $refUrl->getHost();
-			$parts = ip2long($host)
-				? [$host]
-				: array_reverse(explode('.', $host));
+			$parts = self::hostParts($host);
 			$url = strtr($url, [
 				'/%basePath%/' => $refUrl->getBasePath(),
 				'%tld%' => $parts[0],
@@ -631,6 +627,19 @@ class Route implements Router
 		}
 
 		return $res;
+	}
+
+
+	/**
+	 * Splits a host into parts for %tld%/%domain%/%sld% wildcards; IP addresses are kept whole.
+	 * @internal
+	 * @return non-empty-list<string>
+	 */
+	public static function hostParts(string $host): array
+	{
+		return str_starts_with($host, '[') || ip2long($host) !== false // [IPv6] or IPv4
+			? [$host]
+			: array_reverse(explode('.', $host));
 	}
 
 
