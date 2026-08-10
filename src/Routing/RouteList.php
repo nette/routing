@@ -106,9 +106,25 @@ class RouteList implements Router
 	}
 
 
+	/**
+	 * Adjusts the parameters before URL generation; the counterpart of completeParameters().
+	 * Returning null means the parameters are not this list's.
+	 * @param  array<string, mixed>  $params
+	 * @return ?array<string, mixed>
+	 */
+	protected function prepareParameters(array $params): ?array
+	{
+		return $params;
+	}
+
+
 	/** @param array<string, mixed>  $params */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
+		if (($params = $this->prepareParameters($params)) === null) {
+			return null;
+		}
+
 		if ($this->domain) {
 			$this->refUrlCache ??= new \WeakMap;
 			$refUrl = $this->refUrlCache[$refUrl] ??= $refUrl->withHost($this->expandDomain($refUrl->getHost()));

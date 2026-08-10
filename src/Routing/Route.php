@@ -249,6 +249,10 @@ class Route implements Router
 	/** @param array<string, mixed>  $params */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
+		if (($params = $this->prepareParameters($params)) === null) {
+			return null;
+		}
+
 		if (!$this->preprocessParams($params)) {
 			return null;
 		}
@@ -288,6 +292,18 @@ class Route implements Router
 		}
 
 		return $url;
+	}
+
+
+	/**
+	 * Adjusts the parameters before URL and template generation.
+	 * Returning null means the parameters are not this route's.
+	 * @param  array<string, mixed>  $params
+	 * @return ?array<string, mixed>
+	 */
+	protected function prepareParameters(array $params): ?array
+	{
+		return $params;
 	}
 
 
