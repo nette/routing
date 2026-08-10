@@ -1,0 +1,106 @@
+{
+	"comment": "Shared contract cases for LinkTemplate::expand() (PHP) and expandLink() (JS). Query values must not contain spaces: PHP urlencode() emits '+', encodeURIComponent '%20'; both are read identically by the server, but the bytes differ.",
+	"expand": [
+		{
+			"name": "basic expansion in query with fragment",
+			"template": "/product/12?do=grid-sort&grid-item_id={item_id}&grid-prev_id={prev_id}#frag",
+			"values": {"item_id": 5, "prev_id": 7},
+			"expected": "/product/12?do=grid-sort&grid-item_id=5&grid-prev_id=7#frag"
+		},
+		{
+			"name": "unexpanded query variable disappears with its pair",
+			"template": "/product/12?do=grid-sort&grid-item_id={item_id}&grid-prev_id={prev_id}#frag",
+			"values": {"item_id": 5},
+			"expected": "/product/12?do=grid-sort&grid-item_id=5#frag"
+		},
+		{
+			"name": "path variable",
+			"template": "/product/{id}",
+			"values": {"id": 12},
+			"expected": "/product/12"
+		},
+		{
+			"name": "path keeps slashes intact",
+			"template": "/file/{path}",
+			"values": {"path": "a/b c"},
+			"expected": "/file/a/b%20c"
+		},
+		{
+			"name": "query encodes slashes",
+			"template": "/search?q={q}",
+			"values": {"q": "a/b"},
+			"expected": "/search?q=a%2Fb"
+		},
+		{
+			"name": "leading unexpanded query pair drops the question mark",
+			"template": "/list?page={page}",
+			"values": {},
+			"expected": "/list"
+		},
+		{
+			"name": "leading query pair filled",
+			"template": "/list?page={page}",
+			"values": {"page": 2},
+			"expected": "/list?page=2"
+		},
+		{
+			"name": "semicolon as server-configured separator",
+			"template": "/index.php?id={id};action=product",
+			"values": {"id": 7},
+			"expected": "/index.php?id=7;action=product"
+		},
+		{
+			"name": "false becomes 0 like in the router",
+			"template": "/toggle/{state}",
+			"values": {"state": false},
+			"expected": "/toggle/0"
+		},
+		{
+			"name": "absolute URL with host",
+			"template": "https://example.com/product/{id}",
+			"values": {"id": 7},
+			"expected": "https://example.com/product/7"
+		},
+		{
+			"name": "null value means unexpanded",
+			"template": "/list?page={page}",
+			"values": {"page": null},
+			"expected": "/list"
+		},
+		{
+			"name": "array value expands to multiple pairs",
+			"template": "/list?ids={ids}&sort=name",
+			"values": {"ids": [1, 2]},
+			"expected": "/list?ids%5B0%5D=1&ids%5B1%5D=2&sort=name"
+		},
+		{
+			"name": "nested array value expands with bracketed keys, null members are skipped",
+			"template": "/list?filter={filter}",
+			"values": {"filter": {"price": {"min": 10}, "tag": "new", "empty": null}},
+			"expected": "/list?filter%5Bprice%5D%5Bmin%5D=10&filter%5Btag%5D=new"
+		},
+		{
+			"name": "empty array drops the pair",
+			"template": "/list?ids={ids}",
+			"values": {"ids": []},
+			"expected": "/list"
+		}
+	],
+	"errors": [
+		{
+			"name": "unexpanded path variable",
+			"template": "/product/{id}",
+			"values": {}
+		},
+		{
+			"name": "unknown variable",
+			"template": "/product/{id}",
+			"values": {"Id": 1}
+		},
+		{
+			"name": "array value in a path variable",
+			"template": "/product/{id}",
+			"values": {"id": [1, 2]}
+		}
+	]
+}

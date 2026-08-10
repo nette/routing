@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"module": "esnext",
+		"target": "es2022",
+		"resolveJsonModule": true,
+		"moduleResolution": "bundler",
+		"strict": true,
+		"noUnusedLocals": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+		"noEmit": true
+	},
+	"include": [
+		"src/assets/*.ts",
+		"tests/assets/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

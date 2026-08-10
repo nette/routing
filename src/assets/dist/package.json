@@ -1,0 +1,29 @@
+{
+	"name": "@nette/routing",
+	"version": "0.1.0",
+	"description": "Client-side counterpart of Nette Routing",
+	"keywords": [
+		"nette",
+		"routing",
+		"links",
+		"url-template"
+	],
+	"homepage": "https://nette.org",
+	"author": "David Grudl (https://davidgrudl.com)",
+	"license": "BSD-3-Clause",
+	"type": "module",
+	"main": "index.js",
+	"module": "index.js",
+	"types": "index.d.ts",
+	"exports": {
+		".": {
+			"types": "./index.d.ts",
+			"import": "./index.js"
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/nette/routing.git",
+		"directory": "src/assets"
+	}
+}
