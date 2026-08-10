@@ -39,8 +39,9 @@ trailing query segment (after `parseQuery`).
 
 - **The offsets are coupled to the number of capturing groups in the split
   regex.** Add or remove a group in that pattern and every `$i -= N` silently
-  reads the wrong slot. This is why `phpstan.neon` carries **6
-  `offsetAccess.notFound` ignores** for this file — PHPStan cannot see the
+  reads the wrong slot. This is why `phpstan.neon` carries **8
+  `offsetAccess.notFound` ignores** for this file (the backward walks in
+  `parseMask`, `compileUrl` and `compileParts`) — PHPStan cannot see the
   invariant, and neither can a casual reader. Treat the parser and its split
   regex as one atomic unit.
 
@@ -136,6 +137,48 @@ opening/closing bracket levels.
   `''` `FilterOut` runs **before** per-parameter `FilterOut`. Together with the
   matching-side rule, this guarantees a parameter's own filter always sits
   *closest* to the URL and the global filter closest to the application.
+- **`TemplateRouter::Deferred` marks a value filled in later — and is
+  template-only.** The marker is a unique `===`-comparable sentinel object,
+  minted as an `@internal` namespace-level constant (`new` is allowed in a
+  namespace constant initializer, not in a class one) and exposed as the
+  interface constant. `constructUrl()` throws on
+  it; only `constructTemplate()` accepts it. During template construction it
+  skips the scalar cast, default-value elision, filter tables, `FilterOut`
+  (including `param2path`) and the pattern re-check — the template gets a
+  variable and `match()` enforces everything on arrival, so a wrong late-supplied value
+  can only 404. The `Constant` fixity gate still applies: a value the URL cannot
+  carry cannot be supplied later.
+- **`constructTemplate()` builds the template structurally, never via a URL
+  string.** `compileParts` is a mirror of `compileUrl` emitting a reversed list
+  of literals and variables instead of a string (the string walk stays separate
+  because it is the hottest path in the package); the equivalence of the two
+  walks is pinned by tests comparing `expand()` with `constructUrl()` byte for
+  byte. Variables carry value handlers mirroring the route's own filter table
+  and out filter (`buildValueHandler` is an expansion-time mirror of the
+  `preprocessParams` value branch, including the raw-vs-encoded insertion
+  semantics), so server-side `expand()` takes application values. Query pairs
+  and variables are emitted directly, xlat renaming included; a deferred
+  parameter that yields no variable (e.g. swallowed by the global `FilterOut`)
+  is reported.
+  `RouteList` delegates to the first router of the owning bucket; a router
+  without the capability is probed for ownership via `constructUrl()` (a
+  non-owner returns `null` before touching the markers) and an owner without
+  the capability **throws** instead of losing ownership to a later route — a
+  failure inside the probe counts as ownership and is chained as the previous
+  exception.
+  `LinkTemplate` is pure output: it never sees the marker, `expand()` inserts
+  values server-side (the RFC 6570 verb; only the `{name}` syntax is shared
+  with the RFC, expansion rules mirror the router), `toTemplateString()`
+  exports the `{name}` wire form for the client, and production code never
+  reconstructs a template from a string. Both `expand()` and the client
+  `expandLink()` also accept an array for a query variable and expand it to
+  multiple pairs in the `http_build_query()` bracket format (null members
+  skipped, an empty array drops the pair) — link caching builds on this, so
+  any link parameter must round-trip through a template. An array in a path
+  variable throws on both sides. The client counterpart is
+  `expandLink()` (`src/assets`, npm `@nette/routing`); both implementations
+  run the shared contract cases in `tests/assets/expandLink.cases.json`
+  (Tester + Vitest).
 
 ## Route collection (`RouteList`)
 
@@ -174,8 +217,10 @@ lookup index for generation.
 
 Query-parameter routing with no mask. `match()` succeeds **only when the path
 info is empty** (i.e. everything after the base path); it returns query +
-defaults. Generation drops any parameter equal to its default. Nothing here is
-non-obvious beyond the empty-path-info condition.
+defaults. Generation drops any parameter equal to its default. It carries the
+`TemplateRouter` capability: a deferred parameter becomes a query variable, while
+`constructUrl()` refuses it like `Route` does. Nothing else here is non-obvious
+beyond the empty-path-info condition.
 
 ## Extension surface (why some `protected`/`@internal` members exist)
 
@@ -196,6 +241,10 @@ internal but are a **stable contract**:
   here). The Application `RouteList` overrides it to apply the module prefix to
   matched parameters; returning `null` from it makes `match()` continue with
   the next router.
+- **`RouteList::prepareParameters()`** — its URL-generation mirror, called by
+  both `constructUrl()` and `constructTemplate()` before delegation. The
+  Application `RouteList` overrides it to strip the module prefix; returning
+  `null` declines the whole list.
 
 Changing the shape of these breaks `nette/application` even though nothing in
 this package references them that way.
@@ -208,6 +257,7 @@ this package references them that way.
 | Mask to regex + sequence | `Route::parseMask`, `parseQuery` |
 | Match precedence, filters | `Route::match` |
 | URL build, auto-optional, constant gate | `Route::constructUrl`, `preprocessParams`, `compileUrl` |
+| URL templates for deferred parameters | `TemplateRouter`, `Route::constructTemplate`, `compileParts`, `LinkTemplate` |
 | Host wildcard substitution | `Route::hostParts`, the `strtr` in `match`/`constructUrl` |
 | Collection order, generation index, tree | `RouteList` (`warmupCache`, `prepareRequest`, `withDomain`/`withPath`) |
 | Serialization | `RouteList::__serialize` |
