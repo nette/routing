@@ -19,5 +19,5 @@ parameters:
 			# The pattern produces predictable 5-element groups; algorithm
 			# decrements $i by known amounts. PHPStan cannot track invariants.
 			identifier: offsetAccess.notFound
-			count: 6
+			count: 8
 			path: src/Routing/Route.php

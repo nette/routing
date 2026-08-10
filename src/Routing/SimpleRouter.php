@@ -14,7 +14,7 @@ use function ini_get, is_scalar;
 /**
  * The bidirectional route for trivial routing via query parameters.
  */
-class SimpleRouter implements Router
+class SimpleRouter implements Router, TemplateRouter
 {
 	public function __construct(
 		/** @var array<string, mixed> */
@@ -35,12 +35,11 @@ class SimpleRouter implements Router
 	/** @param array<string, mixed>  $params */
 	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
 	{
-		// remove default values; null values are retain
-		foreach ($this->defaults as $key => $value) {
-			if (isset($params[$key])
-				&& (is_scalar($params[$key]) ? (string) $params[$key] : $params[$key]) === (is_scalar($value) ? (string) $value : $value)
-			) {
-				unset($params[$key]);
+		$params = $this->removeDefaults($params);
+
+		foreach ($params as $key => $value) {
+			if ($value === TemplateRouter::Deferred) {
+				throw new Nette\InvalidArgumentException("Parameter \$$key is deferred, use constructTemplate() to build a link template.");
 			}
 		}
 
@@ -52,6 +51,45 @@ class SimpleRouter implements Router
 		}
 
 		return $url;
+	}
+
+
+	/** @param array<string, mixed>  $params */
+	public function constructTemplate(array $params, Nette\Http\UrlScript $refUrl): ?LinkTemplate
+	{
+		$params = $this->removeDefaults($params);
+
+		$sep = ini_get('arg_separator.input');
+		$sep = $sep ? $sep[0] : '&';
+		$parts = [$refUrl->getHostUrl() . $refUrl->getPath()];
+		foreach ($params as $key => $value) {
+			if ($value === TemplateRouter::Deferred) {
+				$parts[] = LinkTemplate::queryVariable((string) $key, (string) $key);
+			} elseif ($pair = LinkTemplate::queryPair($key, $value, $sep)) {
+				$parts[] = $pair;
+			}
+		}
+
+		return LinkTemplate::fromParts($parts, $sep);
+	}
+
+
+	/**
+	 * Removes default values; null values are retained, markers never equal a default.
+	 * @param  array<string, mixed>  $params
+	 * @return array<string, mixed>
+	 */
+	private function removeDefaults(array $params): array
+	{
+		foreach ($this->defaults as $key => $value) {
+			if (isset($params[$key])
+				&& (is_scalar($params[$key]) ? (string) $params[$key] : $params[$key]) === (is_scalar($value) ? (string) $value : $value)
+			) {
+				unset($params[$key]);
+			}
+		}
+
+		return $params;
 	}
 
 

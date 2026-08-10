@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use Nette\Http;
-use Nette\Routing\SimpleRouter;
+use Nette\Routing\{SimpleRouter, TemplateRouter};
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -32,3 +32,9 @@ $res = $router->constructUrl([
 	'object' => (object) ['a' => 1, 'b' => [(object) ['c' => 2]]],
 ], $httpRequest->getUrl());
 Assert::same('https://nette.org/?object%5Ba%5D=1&object%5Bb%5D%5B0%5D%5Bc%5D=2', $res);
+
+$template = $router->constructTemplate([
+	'object' => (object) ['a' => 1],
+	'list' => TemplateRouter::Deferred,
+], $httpRequest->getUrl());
+Assert::same('https://nette.org/?object%5Ba%5D=1&list%5B0%5D%5Bc%5D=2', $template->expand(['list' => [(object) ['c' => 2]]]));

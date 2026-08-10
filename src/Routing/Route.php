@@ -15,7 +15,7 @@ use function array_key_exists, count, ini_get, is_array, is_object, is_scalar, i
 /**
  * Bidirectional route mapping between HTTP requests and parameter arrays using a URL mask.
  */
-class Route implements Router
+class Route implements Router, TemplateRouter
 {
 	/** key used in metadata */
 	public const
@@ -163,16 +163,8 @@ class Route implements Router
 		$re = $this->re;
 
 		if ($this->type === self::Host) {
-			$host = $url->getHost();
-			$path = '//' . $host . $url->getPath();
-			$parts = self::hostParts($host);
-			$re = strtr($re, [
-				'/%basePath%/' => preg_quote($url->getBasePath(), '#'),
-				'%tld%' => preg_quote($parts[0], '#'),
-				'%domain%' => preg_quote(isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0], '#'),
-				'%sld%' => preg_quote($parts[1] ?? '', '#'),
-				'%host%' => preg_quote($host, '#'),
-			]);
+			$path = '//' . $url->getHost() . $url->getPath();
+			$re = strtr($re, self::wildcardTable($url, quote: true));
 
 		} elseif ($this->type === self::Relative) {
 			$basePath = $url->getBasePath();
@@ -263,24 +255,9 @@ class Route implements Router
 		}
 
 		// absolutize
-		if ($this->type === self::Relative) {
-			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $refUrl->getBasePath() . $url;
-
-		} elseif ($this->type === self::Path) {
-			$url = (($tmp = $refUrl->getAuthority()) ? "//$tmp" : '') . $url;
-
-		} else {
-			$host = $refUrl->getHost();
-			$parts = self::hostParts($host);
-			$url = strtr($url, [
-				'/%basePath%/' => $refUrl->getBasePath(),
-				'%tld%' => $parts[0],
-				'%domain%' => isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0],
-				'%sld%' => $parts[1] ?? '',
-				'%host%' => $host,
-			]);
-		}
-
+		$url = $this->type === self::Host
+			? strtr($url, self::wildcardTable($refUrl))
+			: $this->urlPrefix($refUrl) . $url;
 		$url = ($this->scheme ?: $refUrl->getScheme()) . ':' . $url;
 
 		// build query string
@@ -308,7 +285,7 @@ class Route implements Router
 
 
 	/** @param array<string, mixed>  $params */
-	private function preprocessParams(array &$params): bool
+	private function preprocessParams(array &$params, bool $deferrable = false): bool
 	{
 		$filter = $this->metadata[''][self::FilterOut] ?? null;
 		if ($filter) {
@@ -341,6 +318,14 @@ class Route implements Router
 				}
 			}
 
+			if ($params[$name] === TemplateRouter::Deferred) { // filters & pattern are enforced on arrival instead
+				if (!$deferrable) {
+					throw new Nette\InvalidArgumentException("Parameter \$$name is deferred, use constructTemplate() to build a link template.");
+				}
+
+				continue;
+			}
+
 			if (is_scalar($params[$name]) && isset($meta[self::FilterTableOut][$params[$name]])) {
 				$params[$name] = $meta[self::FilterTableOut][$params[$name]];
 
@@ -361,6 +346,14 @@ class Route implements Router
 					|| !preg_match("#(?:{$meta[self::Pattern]})$#DA", rawurldecode((string) $params[$name])))
 			) {
 				return false; // pattern not match
+			}
+		}
+
+		if (!$deferrable) {
+			foreach ($params as $name => $value) {
+				if ($value === TemplateRouter::Deferred) { // parameters outside the mask
+					throw new Nette\InvalidArgumentException("Parameter \$$name is deferred, use constructTemplate() to build a link template.");
+				}
 			}
 		}
 
@@ -411,6 +404,68 @@ class Route implements Router
 					? ''
 					: $this->metadata[$name][self::Default] . $path;
 
+			} else {
+				return null; // missing parameter '$name'
+			}
+		} while (true);
+	}
+
+
+	/**
+	 * Mirror of compileUrl() emitting a part list with template variables for
+	 * deferred parameters; the list is in reverse order. Equivalence of both walks
+	 * is pinned by tests comparing expand() with constructUrl() byte for byte.
+	 * @param  array<string, mixed>  $params
+	 * @return ?list<string|array{name: string, key: null, encode: \Closure(string): string}>
+	 */
+	private function compileParts(array &$params): ?array
+	{
+		$parts = []; // in reverse order
+		$brackets = []; // stack of counts of $parts
+		$required = null; // null for auto-optional
+		$i = count($this->sequence) - 1;
+
+		do {
+			if ($this->sequence[$i] !== '') {
+				$parts[] = $this->sequence[$i];
+			}
+
+			if ($i === 0) {
+				return $parts;
+			}
+
+			$i--;
+
+			$name = $this->sequence[$i--]; // parameter name
+
+			if ($name === ']') { // opening optional part
+				$brackets[] = count($parts);
+
+			} elseif ($name[0] === '[') { // closing optional part
+				$tmp = array_pop($brackets) ?? throw new Nette\InvalidStateException('Unbalanced brackets.');
+				if ($required < count($brackets) + 1) { // is this level optional?
+					if ($name !== '[!') { // and not "required"-optional
+						array_splice($parts, $tmp);
+					}
+				} else {
+					$required = count($brackets);
+				}
+			} elseif ($name[0] === '?') { // "foo" parameter
+				continue;
+
+			} elseif (isset($params[$name]) && $params[$name] !== '') {
+				$required = count($brackets); // make this level required
+				$parts[] = $params[$name] === TemplateRouter::Deferred
+					? LinkTemplate::pathVariable($name, $this->buildValueHandler($name))
+					: (string) $params[$name];
+				unset($params[$name]);
+
+			} elseif (isset($this->metadata[$name][self::Fixity])) { // has default value?
+				if ($required === null && !$brackets) { // auto-optional
+					$parts = [];
+				} elseif (($default = (string) $this->metadata[$name][self::Default]) !== '') {
+					$parts[] = $default;
+				}
 			} else {
 				return null; // missing parameter '$name'
 			}
@@ -685,8 +740,159 @@ class Route implements Router
 
 
 	/**
-	 * Encodes a parameter value for use in a URL path segment, leaving allowed characters unencoded.
+	 * Replacement table for the %host% family wildcards.
+	 * @return array<string, string>
 	 */
+	private static function wildcardTable(Nette\Http\UrlScript $url, bool $quote = false): array
+	{
+		$host = $url->getHost();
+		$parts = self::hostParts($host);
+		$table = [
+			'/%basePath%/' => $url->getBasePath(),
+			'%tld%' => $parts[0],
+			'%domain%' => isset($parts[1]) ? "$parts[1].$parts[0]" : $parts[0],
+			'%sld%' => $parts[1] ?? '',
+			'%host%' => $host,
+		];
+		return $quote
+			? array_map(fn(string $s) => preg_quote($s, '#'), $table)
+			: $table;
+	}
+
+
+	/**
+	 * Authority and base-path prefix for non-host masks.
+	 */
+	private function urlPrefix(Nette\Http\UrlScript $refUrl): string
+	{
+		$prefix = ($tmp = $refUrl->getAuthority()) ? "//$tmp" : '';
+		return $this->type === self::Relative
+			? $prefix . $refUrl->getBasePath()
+			: $prefix;
+	}
+
+
+	/**
+	 * Constructs a URL template for parameters given as TemplateRouter::Deferred;
+	 * variables carry value handlers mirroring this route's filter tables and filters.
+	 * @param  array<string, mixed>  $params
+	 */
+	public function constructTemplate(array $params, Nette\Http\UrlScript $refUrl): ?LinkTemplate
+	{
+		if (($params = $this->prepareParameters($params)) === null) {
+			return null;
+		}
+
+		$deferred = [];
+		foreach ($params as $name => $value) {
+			if ($value === TemplateRouter::Deferred) {
+				$deferred[$name] = true;
+			}
+		}
+
+		if (!$this->preprocessParams($params, deferrable: true)) {
+			return null;
+		}
+
+		$parts = $this->compileParts($params);
+		if ($parts === null) {
+			return null;
+		}
+
+		$parts = array_reverse($parts);
+
+		// absolutize; wildcards appear only in mask literals
+		$head = ($this->scheme ?: $refUrl->getScheme()) . ':';
+		if ($this->type === self::Host) {
+			$table = self::wildcardTable($refUrl);
+			foreach ($parts as &$part) {
+				if (is_string($part)) {
+					$part = strtr($part, $table);
+				}
+			}
+
+			unset($part);
+
+		} else {
+			$head .= $this->urlPrefix($refUrl);
+		}
+		if (is_string($parts[0] ?? null)) {
+			$parts[0] = $head . $parts[0];
+		} else {
+			array_unshift($parts, $head);
+		}
+
+		foreach ($parts as $part) {
+			if (!is_string($part)) {
+				unset($deferred[$part['name']]);
+			}
+		}
+
+		// query pairs and variables; punctuation is added by the template at expansion time
+		$sep = ini_get('arg_separator.input');
+		$sep = $sep ? $sep[0] : '&';
+		$occupied = array_flip($this->xlat);
+		foreach ($params as $name => $value) {
+			if (isset($this->xlat[$name])) {
+				$key = $this->xlat[$name];
+			} elseif (isset($occupied[$name])) {
+				continue;
+			} else {
+				$key = $name;
+			}
+
+			if ($value === TemplateRouter::Deferred) {
+				$parts[] = LinkTemplate::queryVariable($name, $key, $this->buildValueHandler($name));
+				unset($deferred[$name]);
+
+			} elseif ($pair = LinkTemplate::queryPair($key, $value, $sep)) {
+				$parts[] = $pair;
+			}
+		}
+
+		if ($deferred) {
+			$name = array_key_first($deferred);
+			throw new Nette\InvalidArgumentException("Parameter \$$name cannot be deferred, the route does not pass its value through to the URL.");
+		}
+
+		return LinkTemplate::fromParts($parts, $sep);
+	}
+
+
+	/**
+	 * Builds a fill-time mirror of preprocessParams() for one parameter, or null
+	 * when the value passes through untransformed (the template encodes it itself).
+	 * @return ?\Closure(string): string
+	 */
+	private function buildValueHandler(string $name): ?\Closure
+	{
+		$meta = $this->metadata[$name] ?? null;
+		if ($meta === null) {
+			return null; // parameter outside the mask
+		}
+
+		$table = $meta[self::FilterTableOut] ?? null;
+		$strict = !empty($meta[self::FilterStrict]);
+		$filter = $meta[self::FilterOut] ?? null;
+		if ($table === null && ($filter === null || $filter === ($this->defaultMeta['#'][self::FilterOut] ?? null))) {
+			return null;
+		}
+
+		$inPath = isset($meta[self::Pattern]); // query parameters have no pattern
+		return function (string $value) use ($table, $strict, $filter, $inPath, $name): string {
+			if ($table !== null && isset($table[$value])) {
+				return (string) $table[$value];
+			} elseif ($table !== null && $strict) {
+				throw new Nette\InvalidArgumentException("Value '$value' of parameter \$$name not found in filter table.");
+			} elseif ($filter !== null) {
+				return (string) $filter($value);
+			}
+
+			return $inPath ? self::param2path($value) : $value;
+		};
+	}
+
+
 	public static function param2path(string $s): string
 	{
 		// segment + "/", see https://datatracker.ietf.org/doc/html/rfc3986#appendix-A

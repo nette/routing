@@ -14,7 +14,7 @@ use function count, is_scalar;
 /**
  * Router collection that tries each router in sequence and caches URL construction lookups.
  */
-class RouteList implements Router
+class RouteList implements Router, TemplateRouter
 {
 	protected ?self $parent = null;
 
@@ -106,9 +106,66 @@ class RouteList implements Router
 	}
 
 
+	/** @param array<string, mixed>  $params */
+	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
+	{
+		if (($params = $this->prepareParameters($params)) === null) {
+			return null;
+		}
+
+		$refUrl = $this->adjustRefUrl($refUrl);
+
+		foreach ($this->getRankedRouters($params) as $router) {
+			$url = $router->constructUrl($params, $refUrl);
+			if ($url !== null) {
+				return $url;
+			}
+		}
+
+		return null;
+	}
+
+
 	/**
-	 * Adjusts the parameters before URL generation; the counterpart of completeParameters().
-	 * Returning null means the parameters are not this list's.
+	 * @param  array<string, mixed>  $params
+	 */
+	public function constructTemplate(array $params, Nette\Http\UrlScript $refUrl): ?LinkTemplate
+	{
+		if (($params = $this->prepareParameters($params)) === null) {
+			return null;
+		}
+
+		$refUrl = $this->adjustRefUrl($refUrl);
+
+		foreach ($this->getRankedRouters($params) as $router) {
+			if ($router instanceof TemplateRouter) {
+				if ($template = $router->constructTemplate($params, $refUrl)) {
+					return $template;
+				}
+
+				continue;
+			}
+
+			$e = null;
+			try {
+				$owns = $router->constructUrl($params, $refUrl) !== null;
+			} catch (\Throwable $e) { // typically choked on a marker value
+				$owns = true;
+			}
+
+			if ($owns) {
+				throw new Nette\InvalidArgumentException(
+					'Cannot build a link template: router ' . $router::class . ' does not implement ' . TemplateRouter::class . '.',
+					previous: $e,
+				);
+			}
+		}
+
+		return null;
+	}
+
+
+	/**
 	 * @param  array<string, mixed>  $params
 	 * @return ?array<string, mixed>
 	 */
@@ -118,13 +175,8 @@ class RouteList implements Router
 	}
 
 
-	/** @param array<string, mixed>  $params */
-	public function constructUrl(array $params, Nette\Http\UrlScript $refUrl): ?string
+	private function adjustRefUrl(Nette\Http\UrlScript $refUrl): Nette\Http\UrlScript
 	{
-		if (($params = $this->prepareParameters($params)) === null) {
-			return null;
-		}
-
 		if ($this->domain) {
 			$this->refUrlCache ??= new \WeakMap;
 			$refUrl = $this->refUrlCache[$refUrl] ??= $refUrl->withHost($this->expandDomain($refUrl->getHost()));
@@ -135,6 +187,17 @@ class RouteList implements Router
 			$refUrl = $this->refUrlCache[$refUrl] ??= $refUrl->withPath($refUrl->getBasePath() . $this->path);
 		}
 
+		return $refUrl;
+	}
+
+
+	/**
+	 * Routers from the generation index bucket matching the parameters.
+	 * @param  array<string, mixed>  $params
+	 * @return list<Router>
+	 */
+	private function getRankedRouters(array $params): array
+	{
 		if ($this->ranks === null) {
 			$this->warmupCache();
 		}
@@ -146,14 +209,7 @@ class RouteList implements Router
 			$key = '*';
 		}
 
-		foreach ($this->ranks[$key] as $router) {
-			$url = $router->constructUrl($params, $refUrl);
-			if ($url !== null) {
-				return $url;
-			}
-		}
-
-		return null;
+		return $this->ranks[$key];
 	}
 
 
