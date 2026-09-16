@@ -13,6 +13,12 @@ The engine is small but dense: mask compilation, matching precedence, and the
 generation cache are expensive-to-reconstruct traps. Read `docs/internals.md`
 before refactoring `Route` or `RouteList`.
 
+`docs/upgrading.md` records, per released version, every change visible to
+users of the package (renames, removals, deprecations, signatures, behavior,
+configuration), each with its commit hash; internal changes are not in it. It
+is the place to look up the history of a public symbol. Do not write to it; it
+is extended at release time from the git history.
+
 ## Project Overview
 
 **Nette Routing** is the bidirectional URL routing core: `match()` turns a request
@@ -36,9 +42,9 @@ composer phpstan
 
 ## Conventions
 
-- Every file starts with `declare(strict_types=1);`; import functions with
-  `use function ...`; private constants for internal state (`Fixity`, `Default`);
-  Nette Coding Standard.
+- Every file starts with `declare(strict_types=1);`; private constants for internal
+  state (`Fixity`, `Default`). Code style is DressCode (`dresscode.neon`), which also
+  maintains the `use function` imports in `src/` - don't edit them by hand.
 - Tests are Nette Tester `.phpt` under `tests/`; `tests/bootstrap.php` provides
   `testRouteIn()` / `testRouteOut()`, and every route is tested **both directions**
   (match and generate). `testRouteIn()` injects an extra `test=testvalue` query
@@ -65,8 +71,8 @@ composer phpstan
 - **`RouteList` builds a generation index (`warmupCache`) bucketed by the single
   most-discriminating constant parameter;** one-way routes are excluded from it -
   that exclusion *is* the canonization mechanism (the 301 is the presenter's job).
-  Serialization (`routing: cache: true`) bypasses the constructor and only works
-  when no closures live in the metadata.
+  Serialization (`routing: cache: true`) drops the `WeakMap` via `__serialize`
+  and only works when no closures live in the metadata.
 - **`protected $defaultMeta` and `@internal getMetadata()`/`getConstantParameters()`
   are a stable contract** that `nette/application` subclasses depend on - changing
   their shape breaks it even though nothing here references them that way.

@@ -217,7 +217,7 @@ In the absolute path mask, we can use the following wildcards to avoid, for exam
 
 ```php
 $router->addRoute('//www.%domain%/%basePath%/<controller>/<action>', ...);
-$router->addRoute('//www.%sld%.%tld%/%basePath%/<controller>/<action', ...);
+$router->addRoute('//www.%sld%.%tld%/%basePath%/<controller>/<action>', ...);
 ```
 
 
@@ -289,7 +289,7 @@ $router->addRoute('<controller>/<action>', [
 
 Multiple dictionary keys can by used for the same controller. They will create various aliases for it. The last key is considered to be the canonical variant (i.e. the one that will be in the generated URL).
 
-The translation table can be applied to any parameter in this way. However, if the translation does not exist, the original value is taken. We can change this behavior by adding `Router::FILTER_STRICT => true` and the route will then reject the URL if the value is not in the dictionary.
+The translation table can be applied to any parameter in this way. However, if the translation does not exist, the original value is taken. We can change this behavior by adding `Route::FilterStrict => true` and the route will then reject the URL if the value is not in the dictionary.
 
 In addition to the translation dictionary in the form of an array, it is possible to set own translation functions:
 
@@ -307,13 +307,13 @@ $router->addRoute('<controller>/<action>/<id>', [
 ]);
 ```
 
-The function `Route::FILTER_IN` converts between the parameter in the URL and the string, which is then passed to the controller, the function `FILTER_OUT` ensures the conversion in the opposite direction.
+The function `Route::FilterIn` converts between the parameter in the URL and the string, which is then passed to the controller, the function `Route::FilterOut` ensures the conversion in the opposite direction.
 
 
 Global Filters
 --------------
 
-Besides filters for specific parameters, you can also define global filters that receive an associative array of all parameters that they can modify in any way and then return. Global filters are defined under `null` key.
+Besides filters for specific parameters, you can also define global filters that receive an associative array of all parameters that they can modify in any way and then return. Global filters are defined under the empty string key.
 
 ```php
 use Nette\Routing\Route;
@@ -330,7 +330,7 @@ $router->addRoute('<controller>/<action>', [
 
 Global filters give you the ability to adjust the behavior of the route in absolutely any way. We can use them, for example, to modify parameters based on other parameters. For example, translation `<controller>` and `<action>` based on the current value of parameter `<lang>`.
 
-If a parameter has a custom filter defined and a global filter exists at the same time, custom `FILTER_IN` is executed before the global and vice versa global `FILTER_OUT` is executed before the custom. Thus, inside the global filter are the values of the parameters `controller` resp. `action` written in PascalCase resp. camelCase style.
+If a parameter has a custom filter defined and a global filter exists at the same time, custom `FilterIn` is executed before the global and vice versa global `FilterOut` is executed before the custom. Thus, inside the global filter are the values of the parameters `controller` resp. `action` written in PascalCase resp. camelCase style.
 
 
 ONE_WAY flag
@@ -345,7 +345,7 @@ $router->addRoute('product-info', [...], $router::ONE_WAY);
 $router->addRoute('product/<id>', [...]);
 ```
 
-When accessing the old URL, the controller automatically redirects to the new URL so that search engines do not index these pages twice (see [#SEO and canonization]).
+When accessing the old URL, the controller automatically redirects to the new URL so that search engines do not index these pages twice (see [SEO and Canonization](#seo-and-canonization)).
 
 
 Subdomains
@@ -360,7 +360,7 @@ $router->withDomain('example.com')
 	->addRoute('<controller>/<action>');
 ```
 
-You can also use [#wildcards] in your domain name:
+You can also use [wildcards](#wildcards) in your domain name:
 
 ```php
 $router = new RouteList;
@@ -438,10 +438,10 @@ Generates addresses in roughly this form:
 http://example.com/?controller=Product&action=detail&id=123
 ```
 
-The parameter of the `SimpleRouter` constructor is a default controller & action, ie. action to be executed if we open e.g. `http://example.com/` without additional parameters.
+The parameter of the `SimpleRouter` constructor is an array of default parameters, i.e. those used if we open e.g. `http://example.com/` without additional parameters.
 
 ```php
-$router = new Nette\Application\Routers\SimpleRouter();
+$router = new Nette\Routing\SimpleRouter(['controller' => 'HomepageController']);
 ```
 
 
@@ -450,9 +450,9 @@ SEO and Canonization
 
 The framework increases SEO (search engine optimization) by preventing duplication of content at different URLs. If multiple addresses link to a same destination, eg `/index` and `/index.html`, the framework determines the first one as primary (canonical) and redirects the others to it using HTTP code 301. Thanks to this, search engines will not index pages twice and do not break their page rank. .
 
-This process is called canonization. The canonical URL is the one generated by the router, i.e. by the first matching route in the [collection ](#route-collection) without the ONE_WAY flag. Therefore, in the collection, we list **primary routes first**.
+This process is called canonization. The canonical URL is the one generated by the router, i.e. by the first matching route in the [collection](#route-collection) without the ONE_WAY flag. Therefore, in the collection, we list **primary routes first**.
 
-Canonization is performed by the controller, more in the chapter [canonization ](controllers#Canonization).
+Canonization is performed by the controller, more in the chapter [canonization](https://doc.nette.org/en/application/presenters#toc-canonization).
 
 
 HTTPS
@@ -488,7 +488,7 @@ $router->addRoute('https://%host%/<controller>/<action>', ...);
 Routing Debugger
 ================
 
-We will not hide from you that routing may seem a bit magical at first, and before you get into it, Routing Debugger will be a good helper. This is a panel displayed in the [Tracy Bar ](tracy:), which provides a clear list of routes as well as parameters that the router obtained from the URL.
+We will not hide from you that routing may seem a bit magical at first, and before you get into it, Routing Debugger will be a good helper. This is a panel displayed in the [Tracy Bar](https://tracy.nette.org), which provides a clear list of routes as well as parameters that the router obtained from the URL.
 
 The green bar with symbol ✓ represents the route that matched the current URL, the blue bars with symbols ≈ indicate the routes that would also match the URL if green did not overtake them. We see the current controller & action further.
 
@@ -516,14 +516,14 @@ class MyRouter implements Nette\Routing\Router
 }
 ```
 
-Method `match` processes the current request in the parameter [$httpRequest ](http-request-response#HTTP request) (which offers more than just URL) into the an array containing the name of the controller and its parameters. If it cannot process the request, it returns null.
+Method `match` processes the current request in the parameter [$httpRequest](https://doc.nette.org/en/http/request) (which offers more than just URL) into the an array containing the name of the controller and its parameters. If it cannot process the request, it returns null.
 
 Method `constructUrl`, on the other hand, generates an absolute URL from the array of parameters. It can use the information from parameter `$refUrl`, which is the current URL.
 
 To add custom router to the route collection, use `add()`:
 
 ```php
-$router = new Nette\Application\Routers\RouteList;
+$router = new Nette\Routing\RouteList;
 $router->add(new MyRouter);
 $router->addRoute(...);
 ...

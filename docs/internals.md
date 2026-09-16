@@ -162,16 +162,13 @@ lookup index for generation.
   `end()` returns the parent. The child carries the domain/path constraint and
   `prepareRequest()` strips the path prefix / checks the domain before delegating
   to it. Matching descends the tree; a failed constraint returns `null` early.
-  (`$parent` is initialized only by `withDomain`/`withPath`, so `end()` on the
-  root list throws an uninitialized-property `Error`.)
-- **Serialization has no custom hooks.** `routing: cache: true` in
+- **Serialization is deliberate** (`__serialize`). The `refUrlCache`
+  `WeakMap` (a per-instance memo of expanded reference URLs, keyed on
+  `UrlScript` to stay bounded in long-running processes) is **dropped** — a
+  `WeakMap` cannot serialize. This matters because `routing: cache: true` in
   `nette/application` serializes the whole compiled router into the DI container
   and reconstructs it via `unserialize`, bypassing the constructor; it works only
-  when no closures live in the metadata (filters/callbacks). The `refUrlCache`
-  memo (an `SplObjectStorage` of expanded reference URLs, keyed by `UrlScript`
-  instance) serializes along with the rest. It holds strong references — each
-  distinct `UrlScript` adds an entry, which matters only in long-running
-  processes.
+  when no closures live in the metadata (filters/callbacks).
 
 ## SimpleRouter
 
@@ -209,7 +206,8 @@ this package references them that way.
 |---|---|
 | Two-way contract | `Router.php` |
 | Mask to regex + sequence | `Route::parseMask`, `parseQuery` |
-| Match precedence, filters, method check | `Route::match` |
+| Match precedence, filters | `Route::match` |
 | URL build, auto-optional, constant gate | `Route::constructUrl`, `preprocessParams`, `compileUrl` |
 | Host wildcard substitution | `Route::hostParts`, the `strtr` in `match`/`constructUrl` |
 | Collection order, generation index, tree | `RouteList` (`warmupCache`, `prepareRequest`, `withDomain`/`withPath`) |
+| Serialization | `RouteList::__serialize` |
