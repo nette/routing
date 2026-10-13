@@ -9,7 +9,7 @@ namespace Nette\Routing;
 
 use Nette;
 use Nette\Utils\Strings;
-use function array_key_exists, count, ini_get, is_array, is_scalar, is_string, strlen;
+use function array_key_exists, count, ini_get, is_array, is_object, is_scalar, is_string, strlen;
 
 
 /**
@@ -282,7 +282,7 @@ class Route implements Router
 		// build query string
 		$params = self::renameKeys($params, $this->xlat);
 		$sep = ini_get('arg_separator.input');
-		$query = http_build_query($params, '', $sep ? $sep[0] : '&');
+		$query = http_build_query(self::objectsToArrays($params), '', $sep ? $sep[0] : '&');
 		if ($query !== '') {
 			$url .= '?' . $query;
 		}
@@ -626,6 +626,27 @@ class Route implements Router
 		}
 
 		return $res;
+	}
+
+
+	/**
+	 * Converts objects to arrays of their public properties, as http_build_query() did on its own before PHP 8.6.
+	 * @internal
+	 * @param array<mixed>  $arr
+	 * @return array<mixed>
+	 */
+	public static function objectsToArrays(array $arr): array
+	{
+		foreach ($arr as &$v) {
+			if (is_object($v)) {
+				$v = get_object_vars($v);
+			}
+			if (is_array($v)) {
+				$v = self::objectsToArrays($v);
+			}
+		}
+
+		return $arr;
 	}
 
 

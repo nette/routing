@@ -46,7 +46,7 @@ class SimpleRouter implements Router
 
 		$url = $refUrl->getHostUrl() . $refUrl->getPath();
 		$sep = ini_get('arg_separator.input');
-		$query = http_build_query($params, '', $sep ? $sep[0] : '&');
+		$query = http_build_query(Route::objectsToArrays($params), '', $sep ? $sep[0] : '&');
 		if ($query !== '') {
 			$url .= '?' . $query;
 		}
