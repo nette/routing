@@ -8,7 +8,7 @@
 namespace Nette\Routing;
 
 use Nette;
-use function http_build_query, ini_get, is_scalar;
+use function ini_get, is_scalar;
 
 
 /**

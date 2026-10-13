@@ -8,7 +8,7 @@
 namespace Nette\Routing;
 
 use Nette;
-use function array_column, array_filter, array_keys, array_splice, count, is_scalar, rtrim, str_starts_with, strtr;
+use function count, is_scalar;
 
 
 /**
