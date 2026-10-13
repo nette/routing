@@ -4,11 +4,9 @@
  * Test: Nette\Routing\Route with %host% wildcard and IP address hosts
  */
 
-use Nette\Http\Request;
-use Nette\Http\UrlScript;
+use Nette\Http\{Request, UrlScript};
 use Nette\Routing\Route;
 use Tester\Assert;
-
 
 require __DIR__ . '/../bootstrap.php';
 

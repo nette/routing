@@ -7,13 +7,11 @@
 use Nette\Routing\Route;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 test('required parameter without default - null and empty string fail', function () {
-	$route = new Route('<presenter>/<param>', [
-	]);
+	$route = new Route('<presenter>/<param>');
 
 	Assert::same(
 		'http://example.com/homepage/12',

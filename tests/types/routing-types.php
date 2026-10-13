@@ -5,10 +5,8 @@
  * Run: vendor/bin/phpstan analyse tests/types
  */
 
-use Nette\Http\IRequest;
-use Nette\Http\UrlScript;
-use Nette\Routing\RouteList;
-use Nette\Routing\Router;
+use Nette\Http\{IRequest, UrlScript};
+use Nette\Routing\{RouteList, Router};
 use function PHPStan\Testing\assertType;
 
 

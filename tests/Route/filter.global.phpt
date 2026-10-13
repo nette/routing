@@ -7,14 +7,13 @@
 use Nette\Routing\Route;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 $route = new Route('<presenter>', [
 	'' => [
 		Route::FilterIn => function (array $arr) {
-			if (substr($arr['presenter'], 0, 3) !== 'abc') {
+			if (!str_starts_with($arr['presenter'], 'abc')) {
 				return null;
 			}
 
@@ -23,7 +22,7 @@ $route = new Route('<presenter>', [
 			return $arr;
 		},
 		Route::FilterOut => function (array $arr) {
-			if (substr($arr['presenter'], 0, 3) !== 'abc') {
+			if (!str_starts_with($arr['presenter'], 'abc')) {
 				return null;
 			}
 

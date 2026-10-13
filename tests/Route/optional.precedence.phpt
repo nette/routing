@@ -6,12 +6,10 @@
 
 use Nette\Routing\Route;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
-$route = new Route('[<one>/][<two>]', [
-]);
+$route = new Route('[<one>/][<two>]');
 
 testRouteIn($route, '/one', [
 	'one' => 'one',

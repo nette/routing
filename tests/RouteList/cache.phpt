@@ -1,9 +1,7 @@
 <?php declare(strict_types=1);
 
-use Nette\Routing\Route;
-use Nette\Routing\RouteList;
+use Nette\Routing\{Route, RouteList};
 use Tester\Assert;
-
 
 require __DIR__ . '/../bootstrap.php';
 

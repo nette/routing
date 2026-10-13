@@ -2,7 +2,6 @@
 
 use Nette\Routing\RouteList;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 

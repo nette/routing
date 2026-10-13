@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
-use Nette\Routing\Route;
-use Nette\Routing\RouteList;
-
+use Nette\Routing\{Route, RouteList};
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -11,7 +9,7 @@ test('RouteList with many routes - first match wins', function () {
 	$list = new RouteList;
 	$list->add(new Route('product/<id \d+>', ['presenter' => 'Product', 'action' => 'detail']));
 	$list->add(new Route('product/<slug>', ['presenter' => 'Product', 'action' => 'view']));
-	$list->add(new Route('<presenter>/<action>', []));
+	$list->add(new Route('<presenter>/<action>'));
 
 	// First route matches numeric id
 	testRouteIn($list, '/product/123', [

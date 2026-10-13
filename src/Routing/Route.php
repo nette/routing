@@ -70,8 +70,6 @@ class Route implements Router
 		],
 	];
 
-	private string $mask;
-
 	/** @var list<string> */
 	private array $sequence;
 
@@ -95,12 +93,13 @@ class Route implements Router
 
 
 	/**
-	 * @param string  $mask e.g. '<presenter>/<action>/<id \d{1,3}>'
 	 * @param array<string, mixed>  $metadata default values or metadata
 	 */
-	public function __construct(string $mask, array $metadata = [])
-	{
-		$this->mask = $mask;
+	public function __construct(
+		/** e.g. '<presenter>/<action>/<id \d{1,3}>' */
+		private string $mask,
+		array $metadata = [],
+	) {
 		$this->metadata = $this->normalizeMetadata($metadata);
 		$this->parseMask($this->detectMaskType());
 	}

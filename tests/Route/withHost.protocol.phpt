@@ -6,7 +6,6 @@
 
 use Nette\Routing\Route;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
