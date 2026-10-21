@@ -1,17 +1,13 @@
 {
 	"name": "nette/routing",
-	"description": "Nette Routing: two-ways URL conversion",
-	"keywords": ["nette"],
-	"homepage": "https://nette.org",
+	"description": "🧭 Nette Routing: a two-way router. One route both parses an incoming URL and generates links, so pretty, SEO-friendly URLs are defined in one place.",
+	"keywords": ["nette", "routing", "router", "routes", "pretty urls", "seo", "url generation"],
+	"homepage": "https://doc.nette.org/routing",
 	"license": ["BSD-3-Clause", "GPL-2.0-only", "GPL-3.0-only"],
 	"authors": [
 		{
 			"name": "David Grudl",
 			"homepage": "https://davidgrudl.com"
-		},
-		{
-			"name": "Nette Community",
-			"homepage": "https://nette.org/contributors"
 		}
 	],
 	"require": {
