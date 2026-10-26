@@ -76,5 +76,6 @@ composer phpstan
 - **`protected $defaultMeta` and `@internal getMetadata()`/`getConstantParameters()`
   are a stable contract** that `nette/application` subclasses depend on - changing
   their shape breaks it even though nothing here references them that way.
+- **`Route::Method` auto-adds `HEAD` wherever `GET` is allowed** - don't drop it.
 - User-facing how-to (mask syntax, filter usage, modules, `RouterFactory`, standalone
   usage, HTTPS/SEO/canonization) is manual material and lives in the public web docs.

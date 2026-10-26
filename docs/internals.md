@@ -100,6 +100,10 @@ Traps:
 - **Trailing slash is normalized in, not out.** `match()` appends `/` to the
   path and `$re` ends in `/?$`, so `/foo` and `/foo/` both match. A custom
   pattern that anchors on the raw path will misbehave.
+- **`Route::Method` auto-adds `HEAD` wherever `GET` is allowed** (`normalizeMethods`).
+  A route restricted to `GET` answers `HEAD` too; drop this and you silently break
+  HEAD handling. The method check is step 0 of `match()`, before the URL is
+  even looked at, and `constructUrl()` ignores it entirely.
 - **Filter order is asymmetric** (also see generation): on the way *in*,
   per-parameter `FilterIn` runs **before** the global `FilterIn`.
 - **`FilterStrict` rejects, absent translation passes through.** A `FilterTable`

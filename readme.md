@@ -332,6 +332,32 @@ Global filters give you the ability to adjust the behavior of the route in absol
 If a parameter has a custom filter defined and a global filter exists at the same time, custom `FilterIn` is executed before the global and vice versa global `FilterOut` is executed before the custom. Thus, inside the global filter are the values of the parameters `controller` resp. `action` written in PascalCase resp. camelCase style.
 
 
+HTTP Methods
+------------
+
+By default, a route matches regardless of the HTTP method. To restrict it, use the `Route::Method` key with a string (methods separated by `|`) or an array:
+
+```php
+use Nette\Routing\Route;
+
+$router->addRoute('api/articles/<id \d+>', [
+	'controller' => 'ArticleController',
+	'action' => 'show',
+	Route::Method => 'GET',
+]);
+
+$router->addRoute('api/articles/<id \d+>', [
+	'controller' => 'ArticleController',
+	'action' => 'update',
+	Route::Method => ['PUT', 'PATCH'],
+]);
+```
+
+A route allowing `GET` automatically accepts `HEAD` requests as well. The restriction only applies to matching; URL generation ignores it, so links to POST-only endpoints (e.g. form targets) can still be generated.
+
+Because URL generation ignores methods, keep routes usable for canonization: when a GET route and a non-GET route share the same parameters, list the GET route first (or mark the non-GET one with the `oneWay` flag), otherwise the non-GET route may be picked as the canonical URL of a page it can never serve.
+
+
 OneWay flag
 ------------
 

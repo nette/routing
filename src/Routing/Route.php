@@ -26,6 +26,9 @@ class Route implements Router
 		FilterTable = 'filterTable',
 		FilterStrict = 'filterStrict';
 
+	/** key used in metadata to restrict the route to specific HTTP methods, e.g. 'GET|POST' or ['GET', 'POST'] */
+	public const Method = '#method';
+
 	#[\Deprecated('use Route::Value')]
 	public const VALUE = self::Value;
 
@@ -93,6 +96,9 @@ class Route implements Router
 
 	private bool $strictDefaults = false;
 
+	/** @var list<string>|null allowed HTTP methods */
+	private ?array $methods = null;
+
 
 	/**
 	 * @param array<string, mixed>  $metadata default values or metadata
@@ -102,6 +108,11 @@ class Route implements Router
 		private string $mask,
 		array $metadata = [],
 	) {
+		if (isset($metadata[self::Method])) {
+			$this->methods = self::normalizeMethods($metadata[self::Method]);
+			unset($metadata[self::Method]);
+		}
+
 		$this->metadata = $this->normalizeMetadata($metadata);
 		$this->parseMask($this->detectMaskType());
 	}
@@ -120,6 +131,50 @@ class Route implements Router
 	public function getMask(): string
 	{
 		return $this->mask;
+	}
+
+
+	/**
+	 * Returns allowed HTTP methods, or null when the route is method-agnostic.
+	 * @return list<string>|null
+	 */
+	public function getMethods(): ?array
+	{
+		return $this->methods;
+	}
+
+
+	/** @return non-empty-list<string> */
+	private static function normalizeMethods(mixed $methods): array
+	{
+		$methods = is_string($methods) ? explode('|', $methods) : $methods;
+		if (!is_array($methods)) {
+			throw new Nette\InvalidArgumentException('Route::Method expects string or array of strings, ' . get_debug_type($methods) . ' given.');
+		}
+
+		$res = [];
+		foreach ($methods as $method) {
+			if (!is_string($method)) {
+				throw new Nette\InvalidArgumentException('Route::Method expects string or array of strings, ' . get_debug_type($method) . ' given.');
+			}
+
+			$method = strtoupper(trim($method));
+			if (!preg_match('#^[A-Z][A-Z-]*$#D', $method)) {
+				throw new Nette\InvalidArgumentException("Invalid HTTP method '$method' in Route::Method.");
+			}
+
+			$res[] = $method;
+		}
+
+		if (!$res) {
+			throw new Nette\InvalidArgumentException('Route::Method must specify at least one HTTP method.');
+		}
+
+		if (in_array('GET', $res, true) && !in_array('HEAD', $res, true)) {
+			$res[] = 'HEAD'; // HEAD must be answerable wherever GET is
+		}
+
+		return $res;
 	}
 
 
@@ -168,6 +223,10 @@ class Route implements Router
 	/** @return ?array<string, mixed> */
 	public function match(Nette\Http\IRequest $httpRequest): ?array
 	{
+		if ($this->methods && !in_array($httpRequest->getMethod(), $this->methods, true)) {
+			return null;
+		}
+
 		// combine with precedence: mask (params in URL-path), fixity, query, (post,) defaults
 
 		// 1) URL MASK
